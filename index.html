@@ -242,7 +242,7 @@
   .ggrow:last-child > span{border-bottom:none}
   .ggrow.max > span{background:rgba(232,163,44,.20);color:#8a5e00;font-weight:800}
   .ggrow.max > span.gg-mg{color:#b5740a}
-  .ggrow.max > span:first-child::before{content:"🎯 ";font-size:.7rem}
+  .ggrow.max > span:first-child::before{content:""}
   .ggrow.hit > span{background:rgba(19,138,82,.16);font-weight:800}
   .ggrow.hit.max > span{background:var(--vert);color:#fff;font-weight:800;box-shadow:inset 0 0 0 1px rgba(255,255,255,.15)}
   .ggrow.hit.max > span.gg-mg{color:#fff}
@@ -360,6 +360,8 @@
 .offer-visu:hover{
     transform:scale(1.02);
 }
+
+
   .offer-hero{
     background:linear-gradient(135deg,var(--or) 0%,#f4b942 100%);
     padding:20px 18px;color:#3a2700;position:relative;overflow:hidden;
@@ -456,21 +458,15 @@
 
 <!-- PANEL OFFRES -->
 <section class="tab-panel active" id="tab-offres">
-  <div class="offer-visuals">
-    <img
-    class="offer-visu"
-    src="Images/offre-tube.webp"
-     onclick="openImage(this.src)"
-    alt="Offre Tube">
-
-<img
-    class="offer-visu"
-    src="Images\offre-flasque.webp"
-    onclick="openImage(this.src)"
-    alt="Offre Flasque">
-
-     </div>
-
+  <div style="margin:20px auto;max-width:860px;padding:0 14px;">
+    <div style="border-radius:16px;overflow:hidden;box-shadow:var(--ombre);">
+      <picture>
+        <source media="(min-width:640px)" srcset="Images/op-tubes-pc.webp">
+        <img src="Images/tubes-mobile.webp" alt="Offre tubes" style="width:100%;height:auto;display:block;cursor:pointer;" onclick="openImage(this.currentSrc)">
+      </picture>
+    </div>
+  </div>
+  <div style="margin:14px 14px 0">
     <button class="offer-cta" onclick="goTab('commande')">Passer commande →</button>
   </div>
 </section>
@@ -494,6 +490,7 @@
     <button type="button" class="ms-change" id="ms_change">Changer</button>
   </div>
   <div class="field"><label>Contact / acheteur</label><input type="text" id="c_contact" placeholder="Nom de la personne qui commande"></div>
+  <div class="field"><label>Numéro de téléphone</label><input type="tel" id="c_tel" placeholder="06 00 00 00 00"></div>
   <div class="field"><label>Email</label><input type="email" id="c_email" placeholder="votre@email.fr"></div>
 </section>
 
@@ -517,12 +514,12 @@
 </div>
 
 <!-- TUBES -->
-<div class="section-title"><span class="pic">🧊</span> Displays de 8 tubes</div>
+<div class="section-title"><span class="pic">🧊</span> DISPLAYS DE 8 TUBES</div>
 <p class="section-sub">PCB display de 8 • livré prérempli</p>
 <div class="prod-list" id="list-tubes"></div>
 
 <!-- FLASQUES -->
-<div class="section-title" style="margin-top:26px"><span class="pic">💧</span> Flasque souple Hydratis</div>
+<div class="section-title" style="margin-top:26px"><span class="pic">💧</span> FLASQUES SOUPLES</div>
 <p class="section-sub"><span style="display:inline-block;background:var(--eau);color:#fff;font-size:.65rem;font-weight:800;border-radius:5px;padding:2px 8px;vertical-align:middle;margin-right:6px;">NOUVEAU</span>PCB de 10 • 500 ml</p>
 <div class="prod-list">
   <div class="prod flasque" id="flasque-card">
@@ -535,13 +532,13 @@
        style="cursor:pointer">
 </div>
         <div class="prod-info">
-          <div class="prod-name">Flasque souple Hydratis</div>
+          <div class="prod-name">Flasques souples</div>
           <div class="prod-ref">FLASQUE_SOUPLE_10</div>
           <div class="prod-ean">PCB de 10 · qté en lots de 10</div>
           <div class="prod-kpi">
-            <span class="kpi"><b>PA</b> 4,78 €<i>HT</i></span>
-            <span class="kpi"><b>PMC</b> 9,99 €<i>TTC</i></span>
-            <span class="kpi marge boosted"><b>Marge</b> <span class="m-boost">42,6 %</span></span>
+            <span class="kpi"><b>PA</b> 5,99 €<i>HT / flasque</i></span>
+            <span class="kpi"><b>PV</b> 12,95 €<i>TTC</i></span>
+            <span class="kpi marge"><b>Marge</b> <span class="marge-val">44,5 %</span></span>
           </div>
         </div>
       </div>
@@ -551,21 +548,31 @@
         <button data-act="plus" id="fl-plus">+</button>
       </div>
     </div>
-    <div class="flasque-total" id="flasque-total" style="display:none">
-      <span class="ft-lbl">Total flasques (× lots de 10)</span>
-      <span class="ft-val" id="fl-total">0,00 €</span>
+    <div class="prod-detail">
+      <div class="detail-grid">
+        <span class="dl">Base HT / flasque</span><span class="dv">9,51 €</span>
+        <span class="dl">Remise 37 %</span><span class="dv">5,99 €</span>
+        <span class="dl">Tarif net HT</span><span class="dv">5,99 €</span>
+        <span class="dl">PMC TTC</span><span class="dv">12,95 €</span>
+        <span class="dl">Marge</span><span class="dv">44,5 %</span>
+        <span class="dl">Coeff</span><span class="dv">2,16</span>
+      </div>
+      <div class="line-total">
+        <span class="lt-lbl">Total HT ligne</span>
+        <span class="lt-val" id="fl-total">0,00 €</span>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- GOURDES -->
-<div class="section-title" style="margin-top:26px"><span class="pic">🥤</span> Gourdes isothermes</div>
+<div class="section-title" style="margin-top:26px"><span class="pic">🥤</span> GOURDES ISOTHERMES</div>
 <p class="section-sub">PCB unitaire • 500 ml</p>
 <div class="prod-list" id="list-gourdes"></div>
 
 
 <!-- PACK 20 -->
-<div class="section-title" style="margin-top:26px"><span class="pic">📦</span> Display de 20 tubes</div>
+<div class="section-title" style="margin-top:26px"><span class="pic">📦</span> DISPLAY DE 20 TUBES</div>
 <p class="section-sub">Display prérempli • assortiment de saveurs</p>
 <div class="prod-list" id="list-pack20"></div>
 
@@ -743,7 +750,7 @@
   <div class="recap-body">
 
     <div class="rcat">
-      <div class="rcat-title">🧊 Displays de 8 tubes</div>
+      <div class="rcat-title">🧊 DISPLAYS DE 8 TUBES</div>
       <div class="rline"><span class="rl-lbl">Nb total de tubes</span><span class="rl-val" id="r_nbtubes">0</span></div>
       <div class="rline"><span class="rl-lbl">Dont gratuit (displays)</span><span class="rl-val" id="r_gratuit">0</span></div>
       <div class="rline"><span class="rl-lbl">Sous-total HT</span><span class="rl-val" id="r_sstotal">0,00 €</span></div>
@@ -752,21 +759,29 @@
     </div>
 
     <div class="rcat">
-      <div class="rcat-title">📦 Display de 20 tubes</div>
+      <div class="rcat-title">📦 DISPLAY DE 20 TUBES</div>
       <div class="rline"><span class="rl-lbl">Nb de displays de 20</span><span class="rl-val" id="r_nbpack20">0</span></div>
       <div class="rcat-total"><span>Total HT display 20</span><span id="r_htpack20">0,00 €</span></div>
     </div>
 
     <div class="rcat">
-      <div class="rcat-title">🥤 Gourdes isothermes</div>
+      <div class="rcat-title">🥤 GOURDES ISOTHERMES</div>
       <div class="rline"><span class="rl-lbl">Nb de gourdes</span><span class="rl-val" id="r_nbgourdes">0</span></div>
       <div class="rcat-total"><span>Total HT gourdes</span><span id="r_htgourdes">0,00 €</span></div>
     </div>
 
     <div class="rcat">
-      <div class="rcat-title">💧 Flasques souples</div>
+      <div class="rcat-title">💧 FLASQUES SOUPLES</div>
       <div class="rline"><span class="rl-lbl">Nb de flasques</span><span class="rl-val" id="r_nbflasques">0</span></div>
       <div class="rcat-total"><span>Total HT flasques</span><span id="r_htflasques">0,00 €</span></div>
+    </div>
+
+    <div class="rcat">
+      <div class="rcat-title">📣 PLV / ILV <span style="font-size:.62rem;font-weight:700;color:var(--vert);background:var(--vert-bg);border-radius:4px;padding:1px 7px;margin-left:5px;">GRATUIT</span></div>
+      <div id="r_plv_list"><div class="rline"><span class="rl-lbl" style="color:var(--gris);font-style:italic;">Aucun matériel sélectionné</span></div></div>
+      <div style="margin-top:9px;padding:8px 11px;background:#fff4e0;border:1px dashed var(--or);border-radius:8px;font-size:.72rem;color:#8a5e00;font-weight:600;line-height:1.4;">
+        ⚠️ Sous réserve de validation par le responsable de secteur
+      </div>
     </div>
 
     <div class="rcat rcat-totaux">
@@ -842,7 +857,12 @@
     <a class="res-item" href="Ressources/Fiche technique produits Hydratis.pdf" target="_blank" rel="noopener">
       <span class="res-ic">🔬</span>
       <span class="res-tx"><span class="rt-title">Fiches techniques produits</span><span class="rt-sub"></span></span>
-      
+
+    </a>
+
+    <a class="res-item" href="Ressources/BDC Hydratis – Intersport – Meteo des plages.xlsx" target="_blank" rel="noopener">
+      <span class="res-ic">💰</span>
+      <span class="res-tx"><span class="rt-title">Tarif 2026</span><span class="rt-sub">Télécharger le tarif au format Excel</span></span>
     </a>
   </div>
 
@@ -855,6 +875,7 @@ function goTab(id){
   document.querySelector('.bottombar').style.display = (id==='commande')?'flex':'none';
   window.scrollTo({top:0,behavior:'instant'});
 }
+
 document.querySelectorAll('.tabbar button').forEach(b=>{
   b.addEventListener('click',()=>goTab(b.dataset.tab));
 });
@@ -979,31 +1000,31 @@ const COMMERCIAUX = {
 
 // Données produits : tubes (display de 8) — base 9 € / display, PMC 9,90 €
 const TUBES = [
-  ["PÊCHE","TU_PEC_8","3760304100024","#ff9d6e"],
-  ["FRUITS DES BOIS","TU_FDB_8","3760304100000","#9c4bb0"],
-  ["CITRON FLEURS DE SUREAU","TU_CIT_8","3760304100017","#e8d44a"],
-  ["MANGUE PASSION","TU_20_MANGPA_8","3760304103452","#f5a623"],
-  ["PASTÈQUE","TU_PASTQ_8","3760304101021","#ef5d6b"],
-  ["NEUTRE","TU_NEUT_8","3760304101120","#7fb4cc"],
-  ["MENTHE","TU_20_MENTHE_8","3760304101670","#4cb89a"],
-  ["ANANAS","TU_20_ANANAS_8","3760304101465","#f3c531"],
-  ["KIWI","TU_20_KIWI_8","3760304101625","#86b93f"],
-  ["COCO","TU_COCO_8","3760304100819","#cdbfa8"],
-  ["CITRONNELLE GINGEMBRE","TU_GIN_8","3760304100291","#d4b94e"],
-  ["MIEL CITRON","TU_MIEL20_8","3760304100949","#e0a93f"],
-  ["POMME CANNELLE","TU_POMCAN_8","3760304101168","#c8694a"],
+  ["Pêche","TU_PEC_8","3760304100024","#ff9d6e"],
+  ["Fruits des bois","TU_FDB_8","3760304100000","#9c4bb0"],
+  ["Citron fleurs de sureau","TU_CIT_8","3760304100017","#e8d44a"],
+  ["Mangue passion","TU_20_MANGPA_8","3760304103452","#f5a623"],
+  ["Pastèque","TU_PASTQ_8","3760304101021","#ef5d6b"],
+  ["Neutre","TU_NEUT_8","3760304101120","#7fb4cc"],
+  ["Menthe","TU_20_MENTHE_8","3760304101670","#4cb89a"],
+  ["Ananas","TU_20_ANANAS_8","3760304101465","#f3c531"],
+  ["Kiwi","TU_20_KIWI_8","3760304101625","#86b93f"],
+  ["Coco","TU_COCO_8","3760304100819","#cdbfa8"],
+  ["Citronnelle gingembre","TU_GIN_8","3760304100291","#d4b94e"],
+  ["Miel citron","TU_MIEL20_8","3760304100949","#e0a93f"],
+  ["Pomme cannelle","TU_POMCAN_8","3760304101168","#c8694a"],
 ];
-const PACK20 = ["DISPLAY DE 20 TUBES LIVRÉ PRÉREMPLI","PACK20_TU_MIX","3760304101229","#0a9bd4"];
+const PACK20 = ["Display de 20 tubes livré prérempli","PACK20_TU_MIX","3760304101229","#0a9bd4"];
 
 const GOURDES = [
-  ["GOURDE ISOTHERME BLEUE","GOU_BL500","3760304100468","#2f7fd1"],
-  ["GOURDE ISOTHERME VERTE","GOU_VR500","3760304101274","#3aa35f"],
-  ["GOURDE ISOTHERME NOIRE","GOU_NR500","3760304100178","#2a2a2a"],
-  ["GOURDE ISOTHERME JAUNE","GOU_JN500","3760304100499","#e8c130"],
-  ["GOURDE ISOTHERME ROUGE","GOU_RG500","3760304100475","#d83a3a"],
-  ["GOURDE ISOTHERME NOIR CHROMÉ","GOU_NRMET500","3760304101755","#4a4a52"],
-  ["GOURDE ISOTHERME ROSE PASTEL","GOU_ROSE500","3760304101748","#eaa0c0"],
-  ["GOURDE ISOTHERME BLANCHE","GOU_BC500","3760304100482","#d8dde0"],
+  ["Gourde isotherme bleue","GOU_BL500","3760304100468","#2f7fd1"],
+  ["Gourde isotherme verte","GOU_VR500","3760304101274","#3aa35f"],
+  ["Gourde isotherme noire","GOU_NR500","3760304100178","#2a2a2a"],
+  ["Gourde isotherme jaune","GOU_JN500","3760304100499","#e8c130"],
+  ["Gourde isotherme rouge","GOU_RG500","3760304100475","#d83a3a"],
+  ["Gourde isotherme noir chromé","GOU_NRMET500","3760304101755","#4a4a52"],
+  ["Gourde isotherme rose pastel","GOU_ROSE500","3760304101748","#eaa0c0"],
+  ["Gourde isotherme blanche","GOU_BC500","3760304100482","#d8dde0"],
 ];
 
 
@@ -1030,7 +1051,7 @@ function makeProd(item, type){
   const unit = ref==='PACK20_TU_MIX'?20:(type==='gourde'?1:8);
   const nn = netNet(base);
   const img = `Images/${ref}.webp`;
-  const short = name.replace(/GOURDE ISOTHERME /,'').split(' ').slice(0,2).join(' ');
+  const short = name.replace(/Gourde isotherme /,'').split(' ').slice(0,2).join(' ');
   const thumb =
   `<img src="${img}" alt="${name}"
     onclick="openImage(this.src)"
@@ -1250,23 +1271,28 @@ MAGASIN
   Code client : ${m.c}
   Groupement : ${m.g||'-'}
   Contact : ${v('c_contact')||'-'}
+  Téléphone : ${v('c_tel')||'-'}
   Email : ${v('c_email')||'-'}
 
+────────────────────────────────
 💧 DISPLAYS 8 TUBES 💧
-${o.free > 0 ? `🆓 ${o.free} DISPLAY(S) OFFERT(S) 🆓` : ''}
-${lignes.length ? lignes.join('\n') : '  (aucun)'}
+${[o.free > 0 ? `🆓 ${o.free} DISPLAY(S) OFFERT(S) 🆓` : null, lignes.length ? lignes.join('\n') : '  (aucun)'].filter(Boolean).join('\n')}
 Nb total de tubes : ${o.nbTubes}
 ${q20line>0?`
+────────────────────────────────
 📦DISPLAY 20 TUBES PRÉREMPLI📦
-  • Display de 20 tubes : ${q20line}
+  • DISPLAY DE 20 TUBES : ${q20line}
 `:''}
+────────────────────────────────
 🥤GOURDES🥤
 ${lignesG.length?lignesG.join('\n'):'  (aucune)'}
   Nb de gourdes : ${o.nbGourdes}
 ${o.flNbUnites>0?`
+────────────────────────────────
 🧃FLASQUES (offre PCB de 10)🧃
-  • Flasque souple Hydratis : ${o.flLots} lot(s) de 10 = ${o.flNbUnites} unités
+  • Flasques souples : ${o.flLots} lot(s) de 10 = ${o.flNbUnites} unités
 `:''}
+────────────────────────────────
 📢MATÉRIELS PLV📢
 ${PLV_REFS.map(r=>{ const q=getPlvQty(r); return q>0?`  • ${PLV_NOMS[r]} : ${q}`:null; }).filter(Boolean).join('\n')||'  (aucun)'}
 
@@ -1314,6 +1340,15 @@ const PLV_NOMS = {
   'PLV_MACA_PEC':'Sticker macaron vitrine'
 };
 function getPlvQty(ref){ return parseInt(document.querySelector(`.plv-qty[data-plv="${ref}"]`)?.value||0)||0; }
+function updatePlvRecap(){
+  const wrap=document.getElementById('r_plv_list');
+  if(!wrap)return;
+  const lines=PLV_REFS.map(r=>{
+    const q=getPlvQty(r);
+    return q>0?`<div class="rline"><span class="rl-lbl">${PLV_NOMS[r]}</span><span class="rl-val">${q}</span></div>`:null;
+  }).filter(Boolean);
+  wrap.innerHTML=lines.length?lines.join(''):'<div class="rline"><span class="rl-lbl" style="color:var(--gris);font-style:italic;">Aucun matériel sélectionné</span></div>';
+}
 document.querySelectorAll('[data-plv]').forEach(el=>{
   el.addEventListener(el.tagName==='INPUT'?'input':'click', function(){
     const ref=this.dataset.plv;
@@ -1323,11 +1358,12 @@ document.querySelectorAll('[data-plv]').forEach(el=>{
       const v=parseInt(inp.value||0)||0;
       inp.value = Math.max(0, act==='plus'?v+1:v-1);
     }
+    updatePlvRecap();
   });
 });
 
 // ===== FLASQUE =====
-const FLASQUE_PA = 4.78;   // PA HT par flasque
+const FLASQUE_PA = 5.99;   // PA HT par flasque
 let flasqueLots = 0; // nombre de lots de 10
 
 function flasqueUnlocked(){
@@ -1338,13 +1374,9 @@ function flasqueTotalHT(){ return flasqueLots*10*FLASQUE_PA; }
 
 function updateFlasque(){
   const card = document.getElementById('flasque-card');
-  const totalEl = document.getElementById('flasque-total');
   card.classList.toggle('active', flasqueLots>0);
   if(flasqueLots>0){
-    totalEl.style.display = 'flex';
     document.getElementById('fl-total').textContent = fmt(flasqueTotalHT());
-  } else {
-    totalEl.style.display = 'none';
   }
 }
 
