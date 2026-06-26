@@ -71,6 +71,8 @@
     font-family:inherit;
   }
   .field input:focus{outline:none;border-color:var(--eau);background:#fff}
+  .field input.input-error{border-color:#d83a3a;background:#fff8f8}
+  .field label .req{color:#d83a3a;margin-left:2px}
   .mag-results{
     position:absolute;left:0;right:0;top:100%;z-index:30;background:#fff;
     border:1.5px solid var(--ligne);border-top:none;border-radius:0 0 10px 10px;
@@ -489,9 +491,9 @@
     </div>
     <button type="button" class="ms-change" id="ms_change">Changer</button>
   </div>
-  <div class="field"><label>Contact / acheteur</label><input type="text" id="c_contact" placeholder="Nom de la personne qui commande"></div>
+  <div class="field"><label>Contact / acheteur<span class="req">*</span></label><input type="text" id="c_contact" placeholder="Nom de la personne qui commande"></div>
   <div class="field"><label>Numéro de téléphone</label><input type="tel" id="c_tel" placeholder="06 00 00 00 00"></div>
-  <div class="field"><label>Email</label><input type="email" id="c_email" placeholder="votre@email.fr"></div>
+  <div class="field"><label>Email<span class="req">*</span></label><input type="email" id="c_email" placeholder="votre@email.fr"></div>
 </section>
 
 <!-- GRATUIT (remonté en tête) -->
@@ -1240,6 +1242,17 @@ document.getElementById('bb_btn').addEventListener('click',function(){
   if(!MAG_SELECTED){
     alert("Merci de sélectionner votre magasin avant d'envoyer la commande.");
     document.getElementById('c_search').focus();
+    return;
+  }
+  const contactEl = document.getElementById('c_contact');
+  const emailEl   = document.getElementById('c_email');
+  const contactVal = contactEl.value.trim();
+  const emailVal   = emailEl.value.trim();
+  contactEl.classList.toggle('input-error', !contactVal);
+  emailEl.classList.toggle('input-error',   !emailVal);
+  if(!contactVal || !emailVal){
+    alert("Merci de renseigner le contact et l'email avant d'envoyer la commande.");
+    (!contactVal ? contactEl : emailEl).focus();
     return;
   }
   const o = window.ORDER;
