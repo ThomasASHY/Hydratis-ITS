@@ -460,6 +460,13 @@
 
   .empty-note{text-align:center;color:var(--gris);font-size:.82rem;padding:8px 16px 0}
   footer{text-align:center;font-size:.68rem;color:var(--gris);padding:6px 16px 14px}
+  .field-notes{margin-top:10px}
+  .field-notes label{display:block;font-size:.72rem;color:var(--gris);margin-bottom:4px;font-weight:600}
+  .field-notes textarea{width:100%;border:1.5px solid #ccc;border-radius:14px;padding:10px 14px;font-size:.88rem;font-family:inherit;background:#F2F2F0;color:#1a2e35;resize:none;min-height:66px;box-sizing:border-box}
+  .field-notes textarea:focus{outline:none;border-color:#aaa;box-shadow:0 0 0 3px rgba(120,120,120,.15)}
+  .secteur-info{margin-top:10px;font-size:.8rem;padding:9px 12px;border-radius:9px;background:#fbfbf9;border:1px solid var(--ligne);color:var(--gris)}
+  .secteur-info.ok{background:var(--eau-clair);border-color:var(--eau);color:var(--eau-fonce);font-weight:600}
+  .secteur-info.warn{background:#ffe8de;border-color:#ffbfa0;color:#c0390a;font-weight:600}
 </style>
 </head>
 <body>
@@ -511,6 +518,11 @@
   <div class="field"><label>Contact / acheteur<span class="req">*</span></label><input type="text" id="c_contact" placeholder="Nom de la personne qui commande"></div>
   <div class="field"><label>Numéro de téléphone</label><input type="tel" id="c_tel" placeholder="06 00 00 00 00"></div>
   <div class="field"><label>Email<span class="req">*</span></label><input type="email" id="c_email" placeholder="votre@email.fr"></div>
+  <div class="field-notes">
+    <label>Notes</label>
+    <textarea id="c_notes" placeholder="Commentaires / infos / n° de commande"></textarea>
+  </div>
+  <div id="secteur-info" class="secteur-info">Sélectionnez votre magasin pour adresser la commande au bon commercial.</div>
 </section>
 
 <!-- GRATUIT (remonté en tête) -->
@@ -772,7 +784,7 @@
 
     <div class="rcat">
       <div class="rcat-title">🧊 DISPLAYS DE 8 TUBES</div>
-      <div class="rline"><span class="rl-lbl">Nb total de tubes</span><span class="rl-val" id="r_nbtubes">0</span></div>
+      <div class="rline"><span class="rl-lbl">Nb de displays</span><span class="rl-val" id="r_nbtubes">0</span></div>
       <div class="rline gift"><span class="rl-lbl">Dont displays offerts</span><span class="rl-val" id="r_gratuit">—</span></div>
       <div class="rcat-total"><span>Total HT tubes</span><span id="r_httubes">0,00 €</span></div>
     </div>
@@ -1017,6 +1029,31 @@ const COMMERCIAUX = {
   "90":"yoann.p@magnitude.fr"
 };
 
+const NOMS = {
+  "stephane.l@magnitude.fr":"Stéphane Lefrand",
+  "severine.v@magnitude.fr":"Séverine V.",
+  "florian.d@magnitude.fr":"Florian D.",
+  "yoann.p@magnitude.fr":"Yoann P."
+};
+
+function routeSecteur(){
+  const info = document.getElementById('secteur-info');
+  if(!MAG_SELECTED){
+    info.className='secteur-info';
+    info.textContent='Sélectionnez votre magasin pour adresser la commande au bon commercial.';
+    return;
+  }
+  const dept = String(MAG_SELECTED.d||'').padStart(2,'0');
+  const email = COMMERCIAUX[dept] || COMMERCIAUX[MAG_SELECTED.d] || null;
+  if(email){
+    info.className='secteur-info ok';
+    info.textContent='Commande adressée à '+NOMS[email]+' ('+email+'), avec copie au service commandes.';
+  } else {
+    info.className='secteur-info warn';
+    info.textContent='Département non reconnu — commande envoyée au service commandes uniquement.';
+  }
+}
+
 // Données produits : tubes (display de 8) — base 9 € / display, PMC 9,90 €
 const TUBES = [
   ["Pêche","TU_PEC_8","3760304100024","#ff9d6e"],
@@ -1209,8 +1246,8 @@ function recompute(){
   const ttc = totalHT + tva55 + tva20;
 
   // MAJ récap
-  set('r_nbtubes',nbTubes);
-  set('r_gratuit',free>0?free+' display'+(free>1?'s':''):'—');
+  set('r_nbtubes',nbDisplays8>0?nbDisplays8+' display'+(nbDisplays8>1?'s':'')+' ('+nbTubes+' tubes)':'0');
+  set('r_gratuit',free>0?free+' display'+(free>1?'s':'')+' ('+(free*8)+' tubes)':'—');
   set('r_httubes',fmt(totalHTtubes));
   set('r_nbpack20',q20);
   set('r_htpack20',fmt(p20Total));
@@ -1495,6 +1532,7 @@ function selectMag(i){
   selectedEl.style.display = 'flex';
   searchEl.parentNode.style.display = 'none';
   resultsEl.classList.remove('show');
+  routeSecteur();
 }
 
 searchEl.addEventListener('input',()=>{
@@ -1512,6 +1550,7 @@ document.getElementById('ms_change').addEventListener('click',()=>{
   searchEl.parentNode.style.display = 'block';
   searchEl.value = '';
   searchEl.focus();
+  routeSecteur();
 });
 
 document.addEventListener('click',(e)=>{
