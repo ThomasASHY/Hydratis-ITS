@@ -333,6 +333,12 @@
   @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 
   /* OFFRES */
+  .offre-visual{margin:20px auto;max-width:860px;padding:0 14px;}
+  .offre-cta-wrap{margin:14px 14px 0}
+  @media (min-width:1600px){
+    .offre-visual{max-width:1150px}
+    .offre-cta-wrap{max-width:1150px;margin-left:auto;margin-right:auto}
+  }
   .offer-card{
     background:#fff;margin:14px;border-radius:16px;overflow:hidden;box-shadow:var(--ombre);
   }
@@ -484,7 +490,7 @@
 
 <!-- PANEL OFFRES -->
 <section class="tab-panel active" id="tab-offres">
-  <div style="margin:20px auto;max-width:860px;padding:0 14px;">
+  <div class="offre-visual">
     <div style="border-radius:16px;overflow:hidden;box-shadow:var(--ombre);">
       <picture>
         <source media="(min-width:640px)" srcset="Images/op-tubes-pc.webp">
@@ -492,7 +498,7 @@
       </picture>
     </div>
   </div>
-  <div style="margin:14px 14px 0">
+  <div class="offre-cta-wrap">
     <button class="offer-cta" onclick="goTab('commande')">Passer commande →</button>
   </div>
 </section>
