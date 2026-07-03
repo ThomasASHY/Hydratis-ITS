@@ -833,6 +833,7 @@
     <div><div class="g-lbl">Total TTC</div><div class="grand-ht" id="g_ht">— HT</div></div>
     <div class="g-val" id="g_ttc">0,00 €</div>
   </div>
+  <div class="rline"><span class="rl-lbl">Franco de port</span><span class="rl-val">200,00 € HT minimum</span></div>
 </div>
 
 <footer>Tarifs 2026 • PA = prix d'achat net net (remise 37 % + ITS 3 %) • PV = prix conseillé TTC • Document de travail</footer>
@@ -928,6 +929,8 @@ const REMISE = 0.37, REMISE_ITS = 0.03;
 
 // 🔧 Destinataire de la commande (ta boîte / service commandes)
 const DESTINATAIRE = "thomas.m@magnitude.fr";
+const MAILER_URL = "https://mailer.thomas-m-682.workers.dev";
+const FRANCO_MIN = 200;
 
 const COMMERCIAUX = {
   // Stéphane Lefrand - Ouest
@@ -1336,6 +1339,12 @@ function set(id,v){document.getElementById(id).textContent=v}
 
 document.getElementById('bb_btn').addEventListener('click',function(){
   if(this.classList.contains('disabled'))return;
+  if(window.ORDER.totalHT<FRANCO_MIN){
+    const deptEarly=String(MAG_SELECTED?.d||'').padStart(2,'0');
+    const contactEmail=COMMERCIAUX[deptEarly]||COMMERCIAUX[MAG_SELECTED?.d]||DESTINATAIRE;
+    alert('Le franco de port est fixé à '+FRANCO_MIN+' € HT. Merci d\'ajouter des produits pour atteindre ce montant avant d\'envoyer la commande.\n\nEn cas de question, merci d\'écrire à votre responsable commercial : '+contactEmail);
+    return;
+  }
   if(!MAG_SELECTED){
     alert("Merci de sélectionner votre magasin avant d'envoyer la commande.");
     document.getElementById('c_search').focus();
@@ -1425,14 +1434,29 @@ const dept = String(MAG_SELECTED?.d || '').padStart(2,'0');
 
 const emailCommercial =
   COMMERCIAUX[dept] || COMMERCIAUX[MAG_SELECTED?.d] || DESTINATAIRE;
+const intro='Bonjour,\n\nMerci pour votre commande.\n\nVotre demande a bien été transmise. Notre équipe commerciale la traitera dans les meilleurs délais.\n\nVous trouverez ci-dessous le récapitulatif de votre commande.\n\n';
+const outro='\n\nCet e-mail est généré automatiquement.\nMerci de ne pas y répondre.\n\nPour toute question concernant votre commande, contactez votre commercial : '+emailCommercial+'\n';
 
-const lien =
-  `mailto:${DESTINATAIRE}` +
-  `?cc=${encodeURIComponent(emailCommercial)}` +
-  `&subject=${encodeURIComponent(objet)}` +
-  `&body=${encodeURIComponent(corps)}`;
-
-window.location.href = lien;
+const btn = this;
+const label = btn.textContent;
+btn.classList.add('disabled');
+btn.textContent = 'Envoi en cours…';
+fetch(MAILER_URL,{
+  method:'POST',
+  headers:{'Content-Type':'application/json'},
+  body:JSON.stringify({to:DESTINATAIRE,cc:[emailCommercial,emailVal].filter(Boolean),subject:objet,body:intro+corps+outro,replyTo:emailVal||undefined})
+}).then(res=>{
+  if(!res.ok)throw new Error('send failed');
+  return res.json();
+}).then(data=>{
+  if(!data.ok)throw new Error(data.error||'send failed');
+  alert('Commande envoyée avec succès !');
+}).catch(()=>{
+  alert("Erreur lors de l'envoi de la commande. Merci de réessayer ou de contacter votre commercial.");
+}).finally(()=>{
+  btn.textContent = label;
+  recompute();
+});
 
 });
 
