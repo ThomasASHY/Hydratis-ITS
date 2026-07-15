@@ -570,8 +570,8 @@
 </div>
         <div class="prod-info">
           <div class="prod-name">Flasques souples</div>
-          <div class="prod-ref">FLASQUE_SOUPLE_10</div>
-          <div class="prod-ean">PCB de 10 · qté en lots de 10</div>
+          <div class="prod-ref">FLAS_ACCROCHE_500</div>
+          <div class="prod-ean">EAN 3760304103889 · qté en lots de 10</div>
           <div class="prod-kpi">
             <span class="kpi"><b>PA</b> 5,81 €<i>HT / flasque</i></span>
             <span class="kpi"><b>PV</b> 12,95 €<i>TTC</i></span>
@@ -871,6 +871,28 @@
     </a>
 
     <a class="res-item"
+   href="Ressources/video 1 mdp.mp4"
+   target="_blank"
+   rel="noopener">
+  <span class="res-ic vid">🏖️</span>
+  <span class="res-tx">
+    <span class="rt-title">Spot météo des plages</span>
+  </span>
+  <span class="res-arrow">ouvrir</span>
+</a>
+
+<a class="res-item"
+   href="Ressources/Video 2 mdp.mp4"
+   target="_blank"
+   rel="noopener">
+  <span class="res-ic vid">🏖️</span>
+  <span class="res-tx">
+    <span class="rt-title">Spot météo des plages</span>
+  </span>
+  <span class="res-arrow">ouvrir</span>
+</a>
+
+<a class="res-item"
    href="https://www.youtube.com/watch?v=rf0JLwKsswg"
    target="_blank"
    rel="noopener">
@@ -1428,7 +1450,8 @@ TOTAUX
 
 Commande passée depuis le bon de commande en ligne Hydratis.`;
 
-const objet = `Commande Hydratis Août 2026 — ${magasin}`;
+const dateJour = new Date().toLocaleDateString('fr-FR');
+const objet = `Commande Hydratis Août 2026 — ${magasin} — ${dateJour}`;
 
 const dept = String(MAG_SELECTED?.d || '').padStart(2,'0');
 
