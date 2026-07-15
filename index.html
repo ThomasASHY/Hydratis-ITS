@@ -1451,7 +1451,7 @@ TOTAUX
 Commande passée depuis le bon de commande en ligne Hydratis.`;
 
 const dateJour = new Date().toLocaleDateString('fr-FR');
-const objet = `Commande Hydratis Août 2026 — ${magasin} — ${dateJour}`;
+const objet = `Commande Hydratis BtoB — ${magasin}${m.cp?` (${m.cp})`:''} — ${dateJour}`;
 
 const dept = String(MAG_SELECTED?.d || '').padStart(2,'0');
 
