@@ -507,10 +507,10 @@
     </div>
   </div>
   <div class="offre-visual" id="offreVisualFlasques" style="display:none">
-    <div style="border-radius:16px;overflow:hidden;box-shadow:var(--ombre);">
+    <div style="border-radius:16px;overflow:hidden;box-shadow:var(--ombre);display:flex;justify-content:center;">
       <picture>
         <source media="(min-width:640px)" srcset="Images/op-flasques-pc.webp">
-        <img src="Images/offre-flasques.webp" alt="Opération Flasques" style="width:100%;height:auto;display:block;cursor:pointer;" onclick="openImage(this.currentSrc)">
+        <img src="Images/offre-flasques.webp" alt="Opération Flasques" style="width:auto;max-width:100%;height:auto;max-height:calc(100vh - 160px);display:block;cursor:pointer;object-fit:contain;" onclick="openImage(this.currentSrc)">
       </picture>
     </div>
   </div>
