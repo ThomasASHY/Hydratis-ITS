@@ -1362,9 +1362,17 @@ function recompute(){
   });
 
   // flasques (TVA 20%)
+  const freeFlGranted = freeFlasques(totalDisplaysCmd); // flasques offertes par le palier atteint (0 hors Opération Flasques)
+  const requiredFlLots = Math.ceil(freeFlGranted/10);
+  if(flasqueLots < requiredFlLots){
+    // ajout automatique des lots offerts dans le panier dès que le palier est atteint
+    flasqueLots = requiredFlLots;
+    const flQtyInput = document.getElementById('fl-qty');
+    if(flQtyInput) flQtyInput.value = flasqueLots;
+  }
   const flLots = flasqueLots;
   const flNbUnites = flLots*10;
-  const freeFl = Math.min(freeFlasques(totalDisplaysCmd), flNbUnites); // flasques offertes (Opération Flasques), plafonnées à la quantité commandée
+  const freeFl = Math.min(freeFlGranted, flNbUnites); // plafonnées à la quantité présente dans le panier
   const flTotalHT = (flNbUnites - freeFl)*FLASQUE_PA;
   document.getElementById('fl-total').textContent = fmt(flTotalHT);
 
