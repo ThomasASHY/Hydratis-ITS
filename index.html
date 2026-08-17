@@ -498,12 +498,25 @@
 
 <!-- PANEL OFFRES -->
 <section class="tab-panel active" id="tab-offres">
-  <div class="offre-visual">
+  <div class="offre-visual" id="offreVisualEte">
     <div style="border-radius:16px;overflow:hidden;box-shadow:var(--ombre);">
       <picture>
         <source media="(min-width:640px)" srcset="Images/op-tubes-pc.webp">
         <img src="Images/offre-tube.webp" alt="Offre tubes" style="width:100%;height:auto;display:block;cursor:pointer;" onclick="openImage(this.currentSrc)">
       </picture>
+    </div>
+  </div>
+  <div class="offre-visual" id="offreVisualFlasques" style="display:none">
+    <div style="border-radius:16px;overflow:hidden;box-shadow:var(--ombre);">
+      <picture>
+        <source media="(min-width:640px)" srcset="Images/op-flasques-pc.webp">
+        <img src="Images/offre-flasques.webp" alt="Opération Flasques" style="width:100%;height:auto;display:block;cursor:pointer;" onclick="openImage(this.currentSrc)">
+      </picture>
+    </div>
+  </div>
+  <div class="offre-visual" id="offreVisualAucune" style="display:none">
+    <div style="border-radius:16px;padding:44px 22px;text-align:center;background:var(--gris-clair);color:var(--gris);font-weight:600;box-shadow:var(--ombre);">
+      Aucune opération commerciale en cours actuellement.<br>Contactez votre commercial pour connaître les prochaines offres.
     </div>
   </div>
   <div class="offre-cta-wrap">
@@ -541,6 +554,7 @@
 </section>
 
 <!-- GRATUIT (remonté en tête) -->
+<div id="promoEte">
 <div class="op-titre-bdc">
   <span class="otb-tag">☀️ Opération Été 2026 ☀️</span>
 </div>
@@ -557,6 +571,26 @@
     <span>Displays commandés : <span id="gc_count">0</span></span>
     <span>Offerts : <span class="gc-val" id="gc_free">0</span></span>
   </div>
+</div>
+</div>
+
+<div id="promoFlasques" style="display:none">
+<div class="op-titre-bdc">
+  <span class="otb-tag">🆕 Opération Flasques 🆕</span>
+</div>
+<div class="gift-banner" id="giftBannerFlasques">
+  <div class="gb-intro-accroche" style="font-size:.9rem;font-weight:800;color:var(--vert);display:flex;align-items:center;gap:7px;">Jusqu'à 30 flasques et 2 PLV de sol offertes grâce aux offres volumiques</div>
+  <p class="gb-intro">Vos flasques et PLV de sol offertes progressent à chaque palier de commande (du 01/09/2026 au 31/10/2026) :</p>
+  <div class="gift-grid">
+    <div class="gg-head">Palier</div><div class="gg-head">Flasques</div><div class="gg-head gg-r">PLV de sol</div>
+    <div class="gift-tier ggrow" data-tier="18"><span>18 packs (144 tubes)</span><span>10 offertes</span><span class="gg-mg">1 offerte</span></div>
+    <div class="gift-tier ggrow max" data-tier="36"><span>36 packs (288 tubes)</span><span>30 offertes</span><span class="gg-mg">2 offertes</span></div>
+  </div>
+  <div class="gift-current">
+    <span>Displays commandés : <span id="gc_count_fl">0</span></span>
+    <span>Flasques offertes : <span class="gc-val" id="gc_freefl">0</span></span>
+  </div>
+</div>
 </div>
 
 <!-- TUBES -->
@@ -664,7 +698,7 @@
           <div class="prod-name">PLV de sol</div>
           <div class="prod-ref">PLV_SOL</div>
           <div class="prod-ean">Présentoir en carton · 144 tubes · L33×H140×P35 cm</div>
-          <div class="prod-ean" style="color:#8a5e00;font-style:italic;font-size:.68rem;margin-top:3px;">⚠️ Sous réserve d'avoir déjà commandé au minimum 144 tubes</div>
+          <div class="prod-ean" id="plvSolNote" style="color:#8a5e00;font-style:italic;font-size:.68rem;margin-top:3px;">⚠️ Sous réserve d'avoir déjà commandé au minimum 144 tubes</div>
           
         </div>
       </div>
@@ -819,6 +853,7 @@
     <div class="rcat">
       <div class="rcat-title">💧 FLASQUES SOUPLES</div>
       <div class="rline"><span class="rl-lbl">Nb de flasques</span><span class="rl-val" id="r_nbflasques">0</span></div>
+      <div class="rline gift" id="r_flgratuit_row" style="display:none"><span class="rl-lbl">Dont flasques offertes</span><span class="rl-val" id="r_flgratuit">0</span></div>
       <div class="rcat-total"><span>Total HT flasques</span><span id="r_htflasques">0,00 €</span></div>
     </div>
 
@@ -971,6 +1006,36 @@ const MAGASINS = [{"r":"BLS SPORTS","v":"VAUCHELLES LES QUESNOY","c":"00004/000"
 
 const TVA_TUBE = 0.055, TVA_GOURDE = 0.20;
 const REMISE = 0.37, REMISE_ITS = 0.03;
+
+// ===== PÉRIODE PROMOTIONNELLE =====
+// "ete"      : Opération Été 2026 (tubes offerts)              — jusqu'au 31/08/2026 23:59:59
+// "flasques" : Opération Flasques (flasques + PLV de sol offerts) — du 01/09/2026 au 31/10/2026 23:59:59
+// "aucune"   : aucune opération commerciale active (après le 31/10/2026)
+const OP_ETE_FIN = new Date(2026,7,31,23,59,59);        // 31 août 2026
+const OP_FLASQUES_FIN = new Date(2026,9,31,23,59,59);   // 31 octobre 2026
+
+// 🔍 MODE APERÇU : ajoutez ?previewDate=2026-09-01 (ou toute autre date AAAA-MM-JJ) à la fin de
+// l'URL de la page pour voir instantanément ce qu'elle affichera à cette date, sans changer
+// l'horloge de votre ordinateur. Sans ce paramètre, la page utilise toujours la date du jour.
+const __previewDateParam = new URLSearchParams(window.location.search).get('previewDate');
+const NOW = __previewDateParam ? new Date(__previewDateParam+'T12:00:00') : new Date();
+if(__previewDateParam){
+  console.log('[Aperçu] Date simulée : '+NOW.toLocaleDateString('fr-FR')+' — retirez ?previewDate=... de l\'URL pour revenir à la date réelle.');
+}
+const PROMO_PERIOD = NOW <= OP_ETE_FIN ? 'ete' : (NOW <= OP_FLASQUES_FIN ? 'flasques' : 'aucune');
+
+if(__previewDateParam){
+  const previewBanner = document.createElement('div');
+  previewBanner.textContent = '🔍 APERÇU — page simulée au ' + NOW.toLocaleDateString('fr-FR') + ' (période : ' + PROMO_PERIOD + '). Retirez ?previewDate=... de l\'adresse pour revenir à la date réelle.';
+  previewBanner.style.cssText = 'position:sticky;top:0;z-index:999;background:#d83a3a;color:#fff;font-weight:800;font-size:.72rem;text-align:center;padding:8px 10px;line-height:1.4;';
+  document.body.prepend(previewBanner);
+}
+
+document.getElementById('offreVisualEte').style.display = PROMO_PERIOD==='ete' ? '' : 'none';
+document.getElementById('offreVisualFlasques').style.display = PROMO_PERIOD==='flasques' ? '' : 'none';
+document.getElementById('offreVisualAucune').style.display = PROMO_PERIOD==='aucune' ? '' : 'none';
+document.getElementById('promoEte').style.display = PROMO_PERIOD==='ete' ? '' : 'none';
+document.getElementById('promoFlasques').style.display = PROMO_PERIOD==='flasques' ? '' : 'none';
 
 // 🔧 Destinataire de la commande (ta boîte / service commandes)
 const DESTINATAIRE = "thomas.m@magnitude.fr";
@@ -1240,9 +1305,15 @@ const lp=document.getElementById('list-pack20');
 lp.appendChild(makeProd(PACK20,'tube'));
 
 function freeDisplays(n){
+  if(PROMO_PERIOD !== 'ete') return 0; // offre "tubes offerts" active uniquement pendant l'Opération Été 2026
   return n >= 34 ? 4 :
          n >= 28 ? 2 :
          n >= 18 ? 1 : 0;
+}
+function freeFlasques(n){
+  if(PROMO_PERIOD !== 'flasques') return 0; // offre "flasques offertes" active uniquement pendant l'Opération Flasques
+  return n >= 36 ? 30 :
+         n >= 18 ? 10 : 0;
 }
 
 function recompute(){
@@ -1292,8 +1363,10 @@ function recompute(){
 
   // flasques (TVA 20%)
   const flLots = flasqueLots;
-  const flTotalHT = flLots*10*FLASQUE_PA;
   const flNbUnites = flLots*10;
+  const freeFl = Math.min(freeFlasques(totalDisplaysCmd), flNbUnites); // flasques offertes (Opération Flasques), plafonnées à la quantité commandée
+  const flTotalHT = (flNbUnites - freeFl)*FLASQUE_PA;
+  document.getElementById('fl-total').textContent = fmt(flTotalHT);
 
   const totalHT = totalHTtubes + p20Total + totalGourdes + flTotalHT;
   const tva55 = (totalHTtubes + p20Total)*TVA_TUBE;
@@ -1310,6 +1383,8 @@ function recompute(){
   set('r_htgourdes',fmt(totalGourdes));
   set('r_nbflasques',flNbUnites);
   set('r_htflasques',fmt(flTotalHT));
+  document.getElementById('r_flgratuit_row').style.display = freeFl>0 ? '' : 'none';
+  set('r_flgratuit',freeFl);
   set('r_totalht',fmt(totalHT));
   set('r_tva55',fmt(tva55));
   set('r_tva20',fmt(tva20));
@@ -1317,12 +1392,27 @@ function recompute(){
   set('g_ttc',fmt(ttc));
   set('bb_ttc',fmt(ttc));
 
-  // gratuit banner
+  // gratuit banner (Opération Été)
   set('gc_count',totalDisplaysCmd);
   set('gc_free',free);
+  // gratuit banner (Opération Flasques)
+  set('gc_count_fl',totalDisplaysCmd);
+  set('gc_freefl',freeFl);
   document.querySelectorAll('.gift-tier').forEach(t=>{
     t.classList.toggle('hit',totalDisplaysCmd>=parseInt(t.dataset.tier));
   });
+
+  // note PLV de sol selon la période promotionnelle et le palier atteint
+  const plvSolNote = document.getElementById('plvSolNote');
+  if(plvSolNote){
+    if(PROMO_PERIOD==='flasques'){
+      if(totalDisplaysCmd>=36) plvSolNote.textContent = '✅ 2 PLV de sol offertes (36 packs atteints)';
+      else if(totalDisplaysCmd>=18) plvSolNote.textContent = '✅ 1 PLV de sol offerte (18 packs atteints) · 2 offertes dès 36 packs (288 tubes)';
+      else plvSolNote.textContent = '⚠️ 1 PLV de sol offerte dès 18 packs (144 tubes) commandés, 2 dès 36 packs (288 tubes)';
+    } else {
+      plvSolNote.textContent = "⚠️ Sous réserve d'avoir déjà commandé au minimum 144 tubes";
+    }
+  }
 
   // marge dynamique sur les tuiles produit (tubes) selon le palier de gratuit atteint
   document.querySelectorAll('.kpi.marge').forEach(el=>{
@@ -1385,7 +1475,7 @@ function recompute(){
   }
 
   // état courant pour le mail
-  window.ORDER = {nbTubes,free,sousTotalHT,totalHTtubes,q20,p20Total,nbGourdes,totalGourdes,totalHT,tva55,tva20,ttc,totalDisplaysCmd,flLots,flNbUnites,flTotalHT};
+  window.ORDER = {nbTubes,free,sousTotalHT,totalHTtubes,q20,p20Total,nbGourdes,totalGourdes,totalHT,tva55,tva20,ttc,totalDisplaysCmd,flLots,flNbUnites,flTotalHT,flFree:freeFl};
 
   // flasque (après ORDER car dépend de totalDisplaysCmd)
   if(typeof updateFlasque==='function') updateFlasque();
@@ -1434,9 +1524,14 @@ document.getElementById('bb_btn').addEventListener('click',function(){
   });
   const q20line = state['PACK20_TU_MIX']||0;
 
+  const opLigne = PROMO_PERIOD==='ete'
+    ? "Opération Été 2026 — Hydratis présente la Météo des Plages (offre valable du 01/07/2026 au 31/08/2026)"
+    : PROMO_PERIOD==='flasques'
+      ? "Opération Flasques — Hydratis (offre valable du 01/09/2026 au 31/10/2026)"
+      : "Hydratis x Intersport";
   const corps =
 `BON DE COMMANDE — HYDRATIS x INTERSPORT
-Opération Été 2026 — Hydratis présente la Météo des Plages (offre valable du 01/07/2026 au 31/08/2026)
+${opLigne}
 
 MAGASIN
   Magasin : INTERSPORT ${m.v} — ${m.r}
@@ -1464,7 +1559,7 @@ ${lignesG.length?lignesG.join('\n'):'  (aucune)'}
 ${o.flNbUnites>0?`
 ────────────────────────────────
 🧃FLASQUES (offre PCB de 10)🧃
-  • Flasques souples : ${o.flLots} lot(s) de 10 = ${o.flNbUnites} unités
+  • Flasques souples : ${o.flLots} lot(s) de 10 = ${o.flNbUnites} unités${o.flFree>0?` (dont ${o.flFree} offerte${o.flFree>1?'s':''})`:''}
 `:''}
 ────────────────────────────────
 📢MATÉRIELS PLV📢
@@ -1573,9 +1668,7 @@ function updateFlasque(){
   const card = document.getElementById('flasque-card');
   card.classList.toggle('active', flasqueLots>0);
   if(flasqueLots===0) card.classList.remove('open');
-  if(flasqueLots>0){
-    document.getElementById('fl-total').textContent = fmt(flasqueTotalHT());
-  }
+  // le total (fl-total) est déjà mis à jour dans recompute() en tenant compte des flasques offertes
 }
 
 (function initFlasque(){
