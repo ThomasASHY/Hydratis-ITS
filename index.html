@@ -509,6 +509,47 @@
   .cs-op-warn{padding:9px 12px;border-radius:9px;font-size:.78rem;font-weight:700;line-height:1.4;background:#ffe8de;border:1.5px solid #ffbfa0;color:#c0390a}
   .cs-op-warn.ok{background:var(--vert-bg);border-color:#bce6cf;color:var(--vert)}
   .cs-op-warn.info{background:#5EACA3;border-color:#5EACA3;color:#fff}
+
+  /* COMMANDE MULTI-MAGASINS (activée à la demande) */
+  /* Encadré commun (fond #F2EBE5, palette #5EACA3) : choix un seul / plusieurs magasins, puis les onglets en dessous */
+  .multi-group{margin:14px 14px 0;padding:10px;background:#F2EBE5;border:1.5px solid #5EACA3;border-radius:14px}
+  .multi-group-title{font-size:.8rem;font-weight:800;color:#2f6660;margin:0 2px 8px}
+  .cs-panel .multi-group{margin:10px 0 0}  /* mode commercial : rangé dans l'encart « type de proposition » */
+  .multi-choix{display:flex;gap:6px;padding:4px;background:#fff;border:1.5px solid #5EACA3;border-radius:11px}
+  .multi-choix button{flex:1;border:0;border-radius:8px;padding:10px 8px;background:transparent;color:#3d7f77;font:inherit;font-size:.86rem;font-weight:800;cursor:pointer}
+  .multi-choix button.active{background:#5EACA3;color:#fff;box-shadow:0 1px 3px rgba(12,36,52,.2)}
+  /* « Dupliquer » : dans la barre du bas, à côté du bouton de validation (multi-magasins uniquement) */
+  /* même gabarit que le bouton de validation, fond #5EACA3 */
+  .bb-dup{background:#5EACA3;color:#fff;border:none;border-radius:11px;font-weight:800;font-family:inherit;cursor:pointer;box-shadow:0 4px 12px rgba(94,172,163,.35)}
+  .bb-dup:active{transform:scale(.97)}
+  .bottombar.multi{gap:8px;padding:12px 10px}
+  .bottombar.multi .bb-btn,.bb-dup{flex:1 1 0;padding:13px 10px;font-size:.85rem;line-height:1.15}
+  .bottombar.multi .bb-info{flex:0 0 auto;white-space:nowrap}
+  .bottombar.multi .bb-val{font-size:1.05rem}
+  /* Proposition du commercial reprise par le magasin pour être modifiée (lien « Modifier » de la page de validation) */
+  .reprise-info{margin-bottom:14px;padding:10px 12px;border-radius:9px;background:var(--vert-bg);border:1.5px solid #bce6cf;color:var(--vert);font-size:.82rem;font-weight:700;line-height:1.4}
+  .multi-bar{margin-top:10px}
+  .multi-bar-title{font-size:.66rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#3d7f77;margin-bottom:6px}
+  .multi-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
+  .multi-tab{flex:0 0 auto;max-width:190px;border:1.5px solid var(--ligne);background:#fff;color:var(--encre);border-radius:10px;padding:6px 10px;font:inherit;font-size:.78rem;font-weight:700;cursor:pointer;text-align:left;line-height:1.25}
+  .multi-tab .mt-nom{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .multi-tab .mt-tot{display:block;font-size:.68rem;font-weight:600;color:var(--gris);font-variant-numeric:tabular-nums}
+  .multi-tab.active{border-color:#5EACA3;background:#5EACA3;color:#fff}
+  .multi-tab.active .mt-tot{color:#fff;opacity:.9}
+  .multi-tab.add{border-style:dashed;border-color:#5EACA3;color:#3d7f77;align-self:stretch}
+  .multi-acts{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  .multi-acts button{flex:1 1 150px;border:1.5px solid var(--ligne);background:#fff;color:var(--encre);border-radius:9px;padding:8px 10px;font:inherit;font-size:.76rem;font-weight:700;cursor:pointer}
+  .multi-acts button.suppr{color:#c0390a;border-color:#ffbfa0}
+  .multi-hint{font-size:.72rem;color:var(--gris);margin:-4px 0 12px;line-height:1.4}
+  .multi-recap{margin:14px 12px 0;background:#fff;border-radius:14px;box-shadow:var(--ombre);overflow:hidden}
+  .multi-recap-head{background:var(--encre);color:#fff;font-weight:800;font-size:.86rem;padding:11px 15px}
+  .multi-recap .mr-line{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 15px;border-bottom:1px solid var(--gris-clair);font-size:.84rem;cursor:pointer}
+  .multi-recap .mr-line.cur{background:var(--eau-clair)}
+  .multi-recap .mr-nom{font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .multi-recap .mr-warn{display:block;font-size:.7rem;font-weight:700;color:#c0390a;white-space:normal}
+  .multi-recap .mr-val{font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+  .multi-recap .mr-val small{display:block;font-weight:600;color:var(--gris);font-size:.68rem}
+  .multi-recap .mr-total{display:flex;justify-content:space-between;padding:11px 15px;font-weight:800;background:var(--gris-clair)}
 </style>
 </head>
 <body>
@@ -565,9 +606,28 @@
   <div class="cs-note">Le récapitulatif devient une proforma. L'e-mail est envoyé au magasin (copie au commercial) et n'a pas valeur de commande tant que le magasin ne l'a pas validé.</div>
 </div>
 
+<!-- MULTI-MAGASINS : un même encadré regroupe le choix « un seul / plusieurs magasins » et, en dessous,
+     les onglets (un panier par magasin), visibles une fois « Plusieurs magasins » choisi.
+     En mode commercial, l'encadré est rangé dans l'encart « type de proposition ». -->
+<div class="multi-group" id="multiGroup">
+  <div class="multi-group-title" id="multiGroupTitle">Vous commandez pour</div>
+  <div class="multi-choix" id="multiChoix">
+    <button type="button" class="active" data-multi="0">Un seul magasin</button>
+    <button type="button" data-multi="1">Plusieurs magasins</button>
+  </div>
+  <div class="multi-bar" id="multiBar" style="display:none">
+    <div class="multi-bar-title" id="multiBarTitle">Vos magasins</div>
+    <div class="multi-tabs" id="multiTabs"></div>
+  </div>
+</div>
+
 <!-- CLIENT -->
 <section class="client">
-  <h2>Votre magasin</h2>
+  <div class="reprise-info" id="repriseInfo" style="display:none"></div>
+  <h2 id="clientTitle">Votre magasin</h2>
+  <div class="multi-acts" id="multiActs" style="display:none">
+    <button type="button" id="multiDel" class="suppr">✕ Retirer ce magasin</button>
+  </div>
   <div class="field" style="position:relative">
     <label>Rechercher votre magasin (ville, code postal ou groupement)</label>
     <input type="text" id="c_search" placeholder="Tapez votre ville ou groupement..." autocomplete="off">
@@ -589,6 +649,7 @@
     <textarea id="c_notes" placeholder="Commentaires / infos / n° de commande"></textarea>
   </div>
   <div id="secteur-info" class="secteur-info">Sélectionnez votre magasin pour adresser la commande au bon commercial.</div>
+  <p class="multi-hint" id="multiHint" style="display:none;margin:10px 0 0">Contact, téléphone et e-mail sont communs à tous les magasins. Le code BT-49, les notes et le panier sont propres à chaque magasin.</p>
 </section>
 
 <!-- GRATUIT (remonté en tête) -->
@@ -923,7 +984,14 @@
     <div><div class="g-lbl">Total TTC</div><div class="grand-ht" id="g_ht">— HT</div></div>
     <div class="g-val" id="g_ttc">0,00 €</div>
   </div>
-  <div class="rline"><span class="rl-lbl">Franco de port</span><span class="rl-val">200,00 € HT minimum</span></div>
+  <div class="rline"><span class="rl-lbl">Franco de port</span><span class="rl-val" id="francoVal">200,00 € HT minimum</span></div>
+</div>
+
+<!-- MULTI-MAGASINS : total par magasin + total général -->
+<div class="multi-recap" id="multiRecap" style="display:none">
+  <div class="multi-recap-head" id="multiRecapHead">Tous vos magasins</div>
+  <div id="multiRecapList"></div>
+  <div class="mr-total"><span>Total général TTC</span><span id="multiRecapTtc">0,00 €</span></div>
 </div>
 
 <footer>Tarifs 2026 • PA = prix d'achat net net (remise 37 % + ITS 3 %) • PV = prix conseillé TTC • Document de travail</footer>
@@ -934,6 +1002,7 @@
     <div class="bb-lbl">Total TTC</div>
     <div class="bb-val" id="bb_ttc">0,00 €</div>
   </div>
+  <button type="button" class="bb-dup" id="multiDup" style="display:none" title="Copier ce panier vers un nouveau magasin">DUPLIQUER LA COMMANDE</button>
   <button class="bb-btn disabled" id="bb_btn">VALIDER LA COMMANDE</button>
 </div>
 
@@ -1325,20 +1394,16 @@ function openSimulatedValidation(payload) {
   heading.textContent = 'Confirmer votre proposition Hydratis';
   const summary = doc.createElement('p');
   summary.textContent = payload.subject + ' — ' + payload.to;
-  const recap = doc.createElement('pre');
-  recap.style.cssText = 'white-space:pre-wrap;line-height:1.5;background:#f5f8fb;padding:20px';
   const info = payload.accept;
-  recap.textContent = [
-    info.magasin || '',
-    ...(info.lignes || []).map(line => line.sec || `${line.n} — ${line.uc} UC — Prix HT net : ${line.pu} — Total : ${line.t}`),
-    '',
-    ...(info.totaux || []).map(([name, value]) => name + ' : ' + value)
-  ].join('\n');
+  // Multi-magasins : un bloc par magasin (case à cocher + question PLV), validés un par un ou tous ensemble
+  const stores = Array.isArray(info.stores) && info.stores.length > 1 ? info.stores : [info];
+  const multi = stores.length > 1;
+  const done = payload.simulationDone || (payload.simulationDone = payload.simulationAcceptedAt ? stores.map((_, i) => i) : []);
   const status = doc.createElement('p');
   status.setAttribute('role', 'status');
   const confirm = doc.createElement('button');
   confirm.type = 'button';
-  confirm.textContent = 'Confirmer la validation et recevoir le mail';
+  confirm.textContent = multi ? 'Confirmer la validation des magasins cochés et recevoir le mail' : 'Confirmer la validation et recevoir le mail';
   confirm.style.cssText = 'padding:16px 24px;background:#138a52;color:white;border:0;border-radius:8px;font-size:17px;cursor:pointer';
   const openMail = doc.createElement('button');
   openMail.type = 'button';
@@ -1352,77 +1417,158 @@ function openSimulatedValidation(payload) {
     showSimulatedMail(message.payload, doc);
   };
   openMail.onclick = showConfirmation;
-  // PLV de sol offerte par l'opération : même question Oui / Non que sur la vraie page de validation (worker)
-  const plvOp = info.plvOp && Number(info.plvOp.q) > 0 ? info.plvOp : null;
-  const plvBox = doc.createElement('fieldset');
-  plvBox.style.cssText = 'border:1.5px solid #bce6cf;background:#e4f5ec;border-radius:10px;padding:12px 14px;margin:0 0 16px' + (plvOp && !payload.simulationAcceptedAt ? '' : ';display:none');
-  if (plvOp) {
-    const legend = doc.createElement('legend');
-    legend.textContent = 'PLV de sol offerte';
-    legend.style.cssText = 'font-weight:800;padding:0 6px';
-    const question = doc.createElement('p');
-    const max = Number(plvOp.q);
-    question.textContent = `Avec l'opération, vous avez droit à ${max} PLV de sol offerte${max>1?'s':''}. ${max>1?'Combien souhaitez-vous en recevoir':'Souhaitez-vous la recevoir'} avec votre commande ?`;
-    question.style.margin = '0 0 8px';
-    // Un choix par quantité possible, du nombre offert à 0
-    const choix = Array.from({length:max+1}, (_, i) => max - i)
-      .map(q => [String(q), q===0 ? (max>1?'Aucune':'Non merci') : max===1 ? 'Oui' : q===max ? `Les ${max}` : `${q} seulement`]);
-    plvBox.append(legend, question, ...choix.map(([value, text]) => {
+  const blocks = stores.map((st, i) => {
+    const box = doc.createElement('section');
+    if (multi) box.style.cssText = 'border:1px solid #d4e1e9;border-radius:10px;padding:12px 14px;margin:0 0 14px';
+    let check = null;
+    if (multi) {
       const label = doc.createElement('label');
-      label.style.cssText = 'display:block;padding:4px 0;cursor:pointer';
-      const radio = doc.createElement('input');
-      radio.type = 'radio'; radio.name = 'plvop'; radio.value = value;
-      label.append(radio, ' ' + text);
-      return label;
-    }));
-  }
-  confirm.onclick = () => {
-    const plvRep = plvOp ? plvBox.querySelector('input[name="plvop"]:checked')?.value : null;
-    if (plvOp && !plvRep) {
-      status.textContent = 'Merci d’indiquer si vous souhaitez recevoir la PLV de sol offerte.';
+      label.style.cssText = 'display:block;font-weight:800;font-size:17px;cursor:pointer;margin-bottom:8px';
+      check = doc.createElement('input');
+      check.type = 'checkbox';
+      check.checked = !done.includes(i);
+      check.disabled = done.includes(i);
+      label.append(check, ' ' + (st.magasin || 'Magasin ' + (i + 1)) + (done.includes(i) ? ' — déjà validé' : ''));
+      box.append(label);
+    }
+    const recap = doc.createElement('pre');
+    recap.style.cssText = 'white-space:pre-wrap;line-height:1.5;background:#f5f8fb;padding:20px';
+    recap.textContent = [
+      ...(multi ? [] : [st.magasin || '']),
+      ...(st.lignes || []).map(line => line.sec || `${line.n} — ${line.uc} UC — Prix HT net : ${line.pu} — Total : ${line.t}`),
+      '',
+      ...(st.totaux || []).map(([name, value]) => name + ' : ' + value)
+    ].join('\n');
+    // PLV de sol offerte par l'opération : même question Oui / Non que sur la vraie page de validation (worker)
+    const plvOp = st.plvOp && Number(st.plvOp.q) > 0 ? st.plvOp : null;
+    const plvBox = doc.createElement('fieldset');
+    plvBox.style.cssText = 'border:1.5px solid #bce6cf;background:#e4f5ec;border-radius:10px;padding:12px 14px;margin:0 0 16px' + (plvOp && !done.includes(i) ? '' : ';display:none');
+    if (plvOp) {
+      const legend = doc.createElement('legend');
+      legend.textContent = 'PLV de sol offerte';
+      legend.style.cssText = 'font-weight:800;padding:0 6px';
+      const question = doc.createElement('p');
+      const max = Number(plvOp.q);
+      question.textContent = `Avec l'opération, vous avez droit à ${max} PLV de sol offerte${max>1?'s':''}. ${max>1?'Combien souhaitez-vous en recevoir':'Souhaitez-vous la recevoir'} avec votre commande ?`;
+      question.style.margin = '0 0 8px';
+      // Un choix par quantité possible, du nombre offert à 0
+      const choix = Array.from({length:max+1}, (_, k) => max - k)
+        .map(q => [String(q), q===0 ? (max>1?'Aucune':'Non merci') : max===1 ? 'Oui' : q===max ? `Les ${max}` : `${q} seulement`]);
+      plvBox.append(legend, question, ...choix.map(([value, text]) => {
+        const label = doc.createElement('label');
+        label.style.cssText = 'display:block;padding:4px 0;cursor:pointer';
+        const radio = doc.createElement('input');
+        radio.type = 'radio'; radio.name = 'plvop' + i; radio.value = value;
+        label.append(radio, ' ' + text);
+        return label;
+      }));
+    }
+    box.append(recap, plvBox);
+    return {i, box, check, plvOp, plvBox};
+  });
+  const refresh = () => {
+    if (done.length < stores.length) {
+      if (done.length) heading.textContent = `${done.length} magasin${done.length>1?'s':''} validé${done.length>1?'s':''} sur ${stores.length}`;
       return;
     }
-    plvBox.style.display = 'none';
-    acceptSimulatedProposal(payload, Number(plvRep) || 0);
     confirm.disabled = true;
     confirm.textContent = '✓ Proposition validée';
     heading.textContent = 'Votre proposition est validée';
+  };
+  confirm.onclick = () => {
+    const sel = blocks.filter(b => !done.includes(b.i) && (!b.check || b.check.checked));
+    if (!sel.length) {
+      status.textContent = 'Cochez au moins un magasin à valider.';
+      return;
+    }
+    const plvQtes = {};
+    for (const b of sel) {
+      const plvRep = b.plvOp ? b.plvBox.querySelector('input[type="radio"]:checked')?.value : null;
+      if (b.plvOp && !plvRep) {
+        status.textContent = 'Merci d’indiquer si vous souhaitez recevoir la PLV de sol offerte' + (multi ? ' (' + stores[b.i].magasin + ')' : '') + '.';
+        return;
+      }
+      plvQtes[b.i] = Number(plvRep) || 0;
+    }
+    acceptSimulatedProposal(payload, sel.map(b => b.i), plvQtes);
+    sel.forEach(b => {
+      b.plvBox.style.display = 'none';
+      if (b.check) { b.check.disabled = true; b.check.parentNode.append(' — validé'); }
+    });
+    refresh();
     status.textContent = 'Un nouveau mail de confirmation a été créé dans la boîte de réception simulée.';
     openMail.style.display = 'inline-block';
     showConfirmation();
   };
-  if (payload.simulationAcceptedAt) {
-    confirm.disabled = true;
+  if (done.length >= stores.length) {
+    refresh();
     confirm.textContent = '✓ Proposition déjà validée';
     status.textContent = 'Cette proposition a déjà été validée en simulation.';
-    if (payload.simulationConfirmationId) openMail.style.display = 'inline-block';
-  }
+  } else refresh();
+  if (payload.simulationConfirmationId) openMail.style.display = 'inline-block';
   const close = doc.createElement('button');
   close.type = 'button';
   close.textContent = 'Fermer cette fenêtre';
   close.style.cssText = 'display:block;margin-top:20px;padding:12px';
   close.onclick = () => popup ? popup.close() : panel.close();
-  panel.append(badge, heading, summary, recap, plvBox, status, confirm, openMail, close);
+  // Comme sur la vraie page : lien « Modifier » (bon de commande pré-rempli), ou renvoi vers le commercial s'il y a des gestes commerciaux
+  const aFaire = stores.filter((_, i) => !done.includes(i));
+  const codes = aFaire.filter(st => st.edit).map(st => st.edit);
+  const modif = doc.createElement('div');
+  modif.style.marginTop = '16px';
+  if (codes.length) {
+    const edit = doc.createElement('button');
+    edit.type = 'button';
+    edit.textContent = '✏️ Modifier les quantités';
+    edit.style.cssText = 'padding:12px 20px;background:white;color:#0673a3;border:1.5px solid #0a9bd4;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer';
+    edit.onclick = () => window.open(location.href.split(/[?#]/)[0] + '?' + new URLSearchParams({reprise: codes.join('|'), rc: info.contact || '', re: payload.to}), '_blank');
+    modif.append(edit);
+  }
+  const gestes = aFaire.filter(st => st.geste);
+  if (gestes.length) {
+    const note = doc.createElement('p');
+    note.style.cssText = 'background:#fff4e0;border:1.5px dashed #e8a32c;color:#8a5e00;border-radius:10px;padding:10px 12px;font-weight:600';
+    note.textContent = (multi ? gestes.map(st => st.magasin).join(', ') + ' : proposition' : 'Cette proposition') +
+      ' avec gestes commerciaux (produits offerts par votre commercial). Pour la modifier, contactez votre commercial : ' + [...new Set(gestes.map(st => st.commercial || info.commercial))].join(', ');
+    modif.append(note);
+  }
+  panel.append(badge, heading, summary, ...blocks.map(b => b.box), status, confirm, openMail, modif, close);
   doc.body.append(panel);
   if (!popup) {
     panel.addEventListener('close', () => panel.remove());
     panel.showModal();
   }
 }
-function acceptSimulatedProposal(payload, plvQte) {
-  if (!MAIL_SIMULATION || !payload.accept || payload.simulationAcceptedAt) return false;
-  payload.simulationAcceptedAt = new Date().toISOString();
+// sel : numéros des magasins validés (toujours [0] hors multi-magasins) ; plvQtes : PLV de sol offertes souhaitées par magasin
+function acceptSimulatedProposal(payload, sel, plvQtes) {
+  if (!MAIL_SIMULATION || !payload.accept || !sel.length) return false;
+  const info = payload.accept;
+  const multi = Array.isArray(info.stores) && info.stores.length > 1;
+  const stores = multi ? info.stores : [info];
+  const done = payload.simulationDone || (payload.simulationDone = []);
+  done.push(...sel.filter(i => !done.includes(i)));
+  const now = new Date().toISOString();
+  if (done.length >= stores.length) payload.simulationAcceptedAt = now;
   payload.simulationConfirmationId = crypto.randomUUID();
-  const subject = 'Confirmation de validation — ' + payload.subject;
-  const plvOp = payload.accept.plvOp;
-  const plvLigne = plvOp
-    ? 'PLV de sol offerte par l\'opération : ' + (plvQte > 0 ? `OUI, ${plvQte}${plvQte < Number(plvOp.q) ? ` sur ${plvOp.q}` : ''} à ajouter à la commande` : 'non souhaitée par le magasin') + '\n\n'
-    : '';
-  const body = 'La proposition a été validée en simulation par ' + payload.to + '.\n\n' + plvLigne + payload.body;
+  const plvLigne = i => {
+    const plvOp = stores[i].plvOp, plvQte = plvQtes[i] || 0;
+    return plvOp
+      ? 'PLV de sol offerte par l\'opération : ' + (plvQte > 0 ? `OUI, ${plvQte}${plvQte < Number(plvOp.q) ? ` sur ${plvOp.q}` : ''} à ajouter à la commande` : 'non souhaitée par le magasin')
+      : '';
+  };
+  const reste = stores.map((_, i) => i).filter(i => !done.includes(i));
+  const subject = 'Confirmation de validation — ' + payload.subject + (multi ? ` (${sel.length} magasin${sel.length>1?'s':''} sur ${stores.length})` : '');
+  const entete = multi
+    ? `La proposition a été validée en simulation par ${payload.to} pour ${sel.length} magasin${sel.length>1?'s':''} sur ${stores.length}.\n\n` +
+      'Magasins validés :\n' + sel.map(i => '  ✓ ' + stores[i].magasin + (plvLigne(i) ? '\n     ' + plvLigne(i) : '')).join('\n') +
+      (reste.length ? '\n\nMagasins non validés à ce jour :\n' + reste.map(i => '  • ' + stores[i].magasin).join('\n') : '') + '\n\n'
+    : 'La proposition a été validée en simulation par ' + payload.to + '.\n\n' + (plvLigne(0) ? plvLigne(0) + '\n\n' : '');
+  const body = entete + payload.body;
   const safeBody = body.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  simulationMessages.unshift({id:payload.simulationConfirmationId,date:payload.simulationAcceptedAt,read:false,payload:{
-    to:payload.accept.commercial,
-    cc:[...new Set([payload.to,payload.accept.dest].filter(Boolean))],
+  const to = stores[sel[0]].commercial || info.commercial;
+  simulationMessages.unshift({id:payload.simulationConfirmationId,date:now,read:false,payload:{
+    to,
+    cc:[...new Set([...(multi ? stores.map(s => s.commercial) : []),payload.to,info.dest].filter(e => e && e !== to))],
     replyTo:payload.to,subject,body,
     html:'<h1 style="color:#138a52">✓ Proposition validée (simulation)</h1><p>Aucune commande réelle ni aucun mail réel n’a été envoyé.</p><pre style="white-space:pre-wrap">' + safeBody + '</pre>',
     attachments:payload.attachments
@@ -1458,7 +1604,7 @@ if(MODE_CS){
   document.getElementById('csPanel').style.display = '';
   const introOct = document.querySelector('#promoOctobre .gb-intro');
   if(introOct) introOct.textContent = "Offre du 01/10/2026 au 30/11/2026. Mode commercial : saisissez les packs payants, puis choisissez les parfums offerts avec « Gratuit » ; ils comptent dans le palier (ex. 14 payants + 1 gratuit = 15 livrés). Seuls les displays de 8 tubes sont éligibles.";
-  document.querySelectorAll('.cs-opt').forEach(b=>b.addEventListener('click',()=>{ CS_MODE = b.dataset.csmode; applyCsMode(); }));
+  document.querySelectorAll('.cs-opt').forEach(b=>b.addEventListener('click',()=>{ CS_MODE = b.dataset.csmode; applyCsMode(); multiRefresh(); }));
   applyCsMode();
 }
 
@@ -1696,10 +1842,11 @@ function storeFreeRowHtml(ref){
 }
 // À l'envoi, si des displays offerts n'ont pas de parfum : on explique l'attribution automatique.
 // OK = envoyer ainsi ; Annuler = revenir choisir (défilement jusqu'à la première ligne « Displays de 8 offerts »).
-function confirmOffertsAuto(n){
+function confirmOffertsAuto(n, nom){
   const top = TUBES.reduce((a,t)=>(state[t[1]]||0)>(state[a[1]]||0)?t:a);
   const op = PROMO_PERIOD==='ete' ? 'Opération Été 2026' : 'Opération octobre – novembre 2026';
   const ok = confirm(
+    (nom ? nom+'\n\n' : '')+
     `${op} : vous n'avez pas choisi le parfum de ${n>1?`${n} displays offerts`:'votre display offert'}.\n\n`+
     `Sans choix de votre part, ${n>1?'ils seront attribués':'il sera attribué'} automatiquement sur votre parfum le plus commandé : ${top[0]} `+
     `(${n} display${n>1?'s':''} de 8, livré${n>1?'s':''} en plus à 0 €).\n\n`+
@@ -2050,56 +2197,57 @@ function recompute(){
 
   // Mise à jour de la carte flasques
   if(typeof updateFlasque==='function') updateFlasque();
+  multiRefresh();
 }
 function set(id,v){document.getElementById(id).textContent=v}
 
-document.getElementById('bb_btn').addEventListener('click',function(){
-  if(ORDER_SENT || this.classList.contains('disabled'))return;
-  if(window.ORDER.totalHT<FRANCO_MIN){
+// ===== ENVOI =====
+const escHtml = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const preHtml = s => '<pre style="font-family:inherit;white-space:pre-wrap;margin:0">'+escHtml(s)+'</pre>';
+const fieldVal = id => document.getElementById(id).value.trim();
+const plural = (n,s) => `${n} ${s}${n>1?'s':''}`;
+const SEP = '────────────────────────────────';
+const TD = 'padding:7px 8px;border-bottom:1px solid #e3e8ec;font-size:14px;font-family:Segoe UI,Arial,sans-serif;color:#0c2434;';
+const TH = 'padding:8px;background:#0c2434;color:#fff;font-size:12px;font-family:Segoe UI,Arial,sans-serif;text-transform:uppercase;letter-spacing:.3px;';
+// Remises détaillées colonne par colonne (mail, confirmation, mail de validation) : Prix HT → remises → Prix HT net
+const REMISES_AFF = [[`Remise -${Math.round(REMISE*100)} %`, REMISE], ['Remise Intersport', REMISE_ITS]];  // titre sans %, le -3 % est dans chaque cellule
+const remLbls = REMISES_AFF.map(r=>r[0]);
+const remPct = r => `-${Math.round(r*100)} %`;
+
+// Contrôles du magasin affiché (franco, magasin sélectionné). `nom` : libellé de l'onglet en multi-magasins.
+function checkStore(nom){
+  const franco = () => {
+    if(window.ORDER.totalHT>=FRANCO_MIN) return true;
     const deptEarly=String(MAG_SELECTED?.d||'').padStart(2,'0');
     const contactEmail=COMMERCIAUX[deptEarly]||COMMERCIAUX[MAG_SELECTED?.d]||DESTINATAIRE;
-    alert('Le franco de port est fixé à '+FRANCO_MIN+' € HT. Merci d\'ajouter des produits pour atteindre ce montant avant d\'envoyer la commande.\n\nEn cas de question, merci d\'écrire à votre responsable commercial : '+contactEmail);
-    return;
-  }
-  if(!MAG_SELECTED){
-    alert("Merci de sélectionner votre magasin avant d'envoyer la commande.");
+    alert((nom?nom+' : le':'Le')+' franco de port est fixé à '+FRANCO_MIN+' € HT'+(nom?' par magasin':'')+'. Merci d\'ajouter des produits pour atteindre ce montant avant d\'envoyer la commande.\n\nEn cas de question, merci d\'écrire à votre responsable commercial : '+contactEmail);
+    return false;
+  };
+  const mag = () => {
+    if(MAG_SELECTED) return true;
+    alert(nom ? `${nom} : merci de sélectionner le magasin, ou de retirer cet onglet, avant d'envoyer.`
+              : "Merci de sélectionner votre magasin avant d'envoyer la commande.");
     document.getElementById('c_search').focus();
-    return;
-  }
-  const contactEl = document.getElementById('c_contact');
-  const emailEl   = document.getElementById('c_email');
-  const contactVal = contactEl.value.trim();
-  const emailVal   = emailEl.value.trim();
-  contactEl.classList.toggle('input-error', !contactVal);
-  emailEl.classList.toggle('input-error',   !emailVal);
-  if(!contactVal || !emailVal){
-    alert("Merci de renseigner le contact et l'email avant d'envoyer la commande.");
-    (!contactVal ? contactEl : emailEl).focus();
-    return;
-  }
+    return false;
+  };
+  return nom ? mag() && franco() : franco() && mag();
+}
+
+// Document du magasin affiché : lignes, récap du mail (texte + HTML), récap court et données du PDF.
+// plvOpRep : réponse à la question « PLV de sol offerte » (null = non posée).
+// pos : {n, nb} en multi-magasins (magasin n sur nb), null pour une commande classique.
+function buildStoreDoc(plvOpRep, pos){
   const o = window.ORDER;
-  const v = id => document.getElementById(id).value.trim();
+  const v = fieldVal;
   const m = MAG_SELECTED;
   const magasin = `INTERSPORT ${m.v}`;
-  // Magasin : PLV de sol offerte(s) par l'opération → on demande s'il souhaite la recevoir, puis l'envoi reprend
-  const plvOpRep = plvOpChoix; plvOpChoix = null;
-  if(!MODE_CS && o.plvSolOffertes>0 && plvOpRep===null){
-    const btnEnvoi = this;
-    askPlvOp(o.plvSolOffertes, rep=>{ plvOpChoix = rep; btnEnvoi.click(); });
-    return;
-  }
-  // Mode commercial : gratuits de l'opération pas (ou pas tous) sélectionnés
-  if(MODE_CS && o.free > o.freeCs8 &&
-     !confirm(csOpMessage(o.totalDisplaysCmd, o.free, o.freeCs8).txt+"\n\nEnvoyer quand même la proposition sans ces gratuits ?")) return;
-  // Magasin : displays offerts pas (ou pas tous) choisis → prévenir de l'attribution automatique
-  if(!MODE_CS && o.free > o.freeCs8 && !confirmOffertsAuto(o.free - o.freeCs8)) return;
+  const contactVal = v('c_contact'), emailVal = v('c_email');
 
   // Prix de référence (base / remise / net net) pour le détail des lignes
   const nnTubeRef = netNet(T_BASE);
   const nnP20Ref  = netNet(P20_BASE);
   const nnGourRef = netNet(G_BASE);
   const FLASQUE_BASE_REF = 9.51;
-  const escHtml = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
   // Lignes commandées : {name, uc, qte:'40 UC', sous:'5 displays de 8 tubes', base, nn, total, ref, ean, free}
   // Le mail affiche un récap compact ; le détail (remises, SKU, gencodes) est dans le PDF joint.
@@ -2115,7 +2263,6 @@ document.getElementById('bb_btn').addEventListener('click',function(){
   for(let k=(MODE_CS?o.free:o.freeCs8);k<o.free && tubesCmd.length;k++){
     tubesCmd.reduce((a,b)=>b.q>a.q?b:a).g++;
   }
-  const plural = (n,s) => `${n} ${s}${n>1?'s':''}`;
   const itemsTubes = tubesCmd.flatMap(t=>{
     const paid = t.q - t.off, out = [];
     if(paid>0)  out.push(mkItem(t.name, paid*8, `${plural(paid,'display')} de 8 tubes`, T_BASE, nnTubeRef, t.ref, t.ean));
@@ -2147,20 +2294,21 @@ document.getElementById('bb_btn').addEventListener('click',function(){
   const docTitre = MODE_CS
     ? `${CS_LABELS[CS_MODE].titre.toUpperCase()} (PROFORMA) — HYDRATIS x INTERSPORT`
     : 'BON DE COMMANDE — HYDRATIS x INTERSPORT';
-  const enteteTxt =
-`${docTitre}
-${opLigne}
-
-MAGASIN
-  Magasin : INTERSPORT ${m.v} — ${m.r}
+  // En-tête : magasin (propre à chaque onglet) puis contact (commun à tous les magasins)
+  const magTxt =
+`  Magasin : INTERSPORT ${m.v} — ${m.r}
   Ville : ${m.v} (${m.cp})
   Département : ${m.d}
   Code client : ${m.c}
   Groupement : ${m.g||'-'}
-${v('c_bt49')?`  Code BT-49 : ${v('c_bt49')}\n`:''}  Contact : ${v('c_contact')||'-'}
+${v('c_bt49')?`  Code BT-49 : ${v('c_bt49')}\n`:''}`;
+  const contactTxt =
+`  Contact : ${v('c_contact')||'-'}
   Téléphone : ${v('c_tel')||'-'}
   Email : ${v('c_email')||'-'}
-${v('c_notes')?`  Notes : ${v('c_notes')}\n`:''}`;
+`;
+  const notesTxt = v('c_notes')?`  Notes : ${v('c_notes')}\n`:'';
+  const enteteTxt = `${docTitre}\n${opLigne}\n\nMAGASIN\n` + magTxt + contactTxt + notesTxt;
 
   // Sections produits (utilisées par le récap du mail et par le PDF)
   const sections = [
@@ -2173,7 +2321,6 @@ ${v('c_notes')?`  Notes : ${v('c_notes')}\n`:''}`;
     {titre:'🥤 GOURDES', items:itemsGourdes, vide:'(aucune)'},
     ...(itemsFlasques.length ? [{titre:'🧃 FLASQUES (offre PCB de 10)', items:itemsFlasques}] : []),
   ];
-  const allItems = sections.flatMap(s=>s.items);
   // PLV de sol offerte(s) par l'opération : ajoutée(s) pour la quantité choisie par le magasin (0 = aucune)
   const plvOpQte = Math.min(plvOpRep||0, o.plvSolOffertes);
   const plvSel = PLV_REFS.map(r=>({n:PLV_NOMS[r], q:getPlvQty(r)+(r==='PLV_SOL' ? plvOpQte : 0)})).filter(x=>x.q>0);
@@ -2188,15 +2335,13 @@ ${v('c_notes')?`  Notes : ${v('c_notes')}\n`:''}`;
   const totaux = [['Total HT',fmt(o.totalHT)],['TVA 5,5 %',fmt(o.tva55)],['TVA 20 %',fmt(o.tva20)],['Total TTC',fmt(o.ttc)]];
   const mentionDoc = MODE_CS
     ? "Proforma établie par votre commercial Hydratis. Ce document n'a pas valeur de commande."
-    : 'Commande passée depuis le bon de commande en ligne Hydratis.';
-  const SEP = '────────────────────────────────';
-
-  // Remises détaillées colonne par colonne (mail, confirmation, mail de validation) : Prix HT → remises → Prix HT net
-  const REMISES_AFF = [[`Remise -${Math.round(REMISE*100)} %`, REMISE], ['Remise Intersport', REMISE_ITS]];  // titre sans %, le -3 % est dans chaque cellule
-  const remLbls = REMISES_AFF.map(r=>r[0]);
-  const remPct = r => `-${Math.round(r*100)} %`;
+    : (REPRISE ? 'Commande passée depuis le bon de commande en ligne Hydratis, à partir d\'une proposition du commercial modifiée par le magasin.'
+               : 'Commande passée depuis le bon de commande en ligne Hydratis.');
+  // Gestes commerciaux : gratuits hors opération (gourdes, flasques, display de 20, ou plus de displays de 8 que le palier n'en offre)
+  const geste = MODE_CS && (o.freeCs8 > o.free || FREE_CAT.some(([,ref])=>!TUBES.some(t=>t[1]===ref) && fq(ref)>0));
 
   // Récap compact — texte : Produit : UC · Prix HT · remises · Prix HT net · Total HT
+  // (en multi-magasins, la mention du document n'est écrite qu'une fois, à la fin du mail)
   const recapTxt = [
     SEP,
     ...sections.flatMap(s=>[
@@ -2213,13 +2358,10 @@ ${v('c_notes')?`  Notes : ${v('c_notes')}\n`:''}`;
     '',
     SEP,
     ...totaux.map(([k,val])=>`${k} : ${val}`),
-    '',
-    mentionDoc
+    ...(pos ? [] : ['', mentionDoc])
   ].join('\n');
 
   // Récap compact — HTML : Produit | UC | Prix HT | Remise(s) | Prix HT net / UC | Total HT
-  const TD = 'padding:7px 8px;border-bottom:1px solid #e3e8ec;font-size:14px;font-family:Segoe UI,Arial,sans-serif;color:#0c2434;';
-  const TH = 'padding:8px;background:#0c2434;color:#fff;font-size:12px;font-family:Segoe UI,Arial,sans-serif;text-transform:uppercase;letter-spacing:.3px;';
   const NCOL = 5 + REMISES_AFF.length;
   const trTitre = t => `<tr><td colspan="${NCOL}" style="${TD}background:#eef3f6;font-weight:800">${escHtml(t)}</td></tr>`;
   const recapHtml =
@@ -2250,127 +2392,218 @@ ${v('c_notes')?`  Notes : ${v('c_notes')}\n`:''}`;
       return `<tr><td colspan="${NCOL-1}" style="${TD}${st}text-align:right">${k}</td><td style="${TD}${st}text-align:right;white-space:nowrap">${val}</td></tr>`;
     }).join('')+
     '</table>'+
-    `<p style="font-family:Segoe UI,Arial,sans-serif;font-size:12px;color:#5d7080;margin:8px 0 0">${escHtml(mentionDoc)}</p>`;
+    (pos ? '' : `<p style="font-family:Segoe UI,Arial,sans-serif;font-size:12px;color:#5d7080;margin:8px 0 0">${escHtml(mentionDoc)}</p>`);
 
-  const preHtml = s => '<pre style="font-family:inherit;white-space:pre-wrap;margin:0">'+escHtml(s)+'</pre>';
+  const dateJour = new Date().toLocaleDateString('fr-FR');
+  const dept = String(m.d || '').padStart(2,'0');
+  const emailCommercial = COMMERCIAUX[dept] || COMMERCIAUX[m.d] || DESTINATAIRE;
 
-const dateJour = new Date().toLocaleDateString('fr-FR');
-const objet = MODE_CS
-  ? `${CS_LABELS[CS_MODE].titre} Hydratis — ${magasin}${m.cp?` (${m.cp})`:''} — ${dateJour}`
-  : `Commande Hydratis BtoB — ${magasin}${m.cp?` (${m.cp})`:''} — ${dateJour}`;
+  // Récap simplifié (page de confirmation + mail « proposition validée ») : produit, UC, votre prix HT, total
+  const recapCourt = {
+    lignes: sections.filter(s=>s.items.length).flatMap(s=>[{sec:s.titre}, ...s.items.map(it=>({n:it.name, uc:it.qte, pu:fmt(it.nn), t:fmt(it.total), off:!!it.free,
+      pb: it.free?'-':fmt(it.base), rms: REMISES_AFF.map(([,r])=>it.free?'OFFERT':remPct(r))}))]),
+    remises: remLbls,
+    plv: plvSel,
+    ...(plvOp ? {plvOp} : {}),
+    // Page de validation : lien « Modifier » (panier à reprendre), ou renvoi vers le commercial s'il y a des gestes commerciaux
+    ...(MODE_CS ? (geste ? {geste:true} : {edit:repriseCode()}) : {}),
+    totaux
+  };
 
-const dept = String(MAG_SELECTED?.d || '').padStart(2,'0');
+  // PDF joint au mail (bon de commande ou proforma) — un par magasin
+  const pdfTitre = MODE_CS ? `${CS_LABELS[CS_MODE].titre} (proforma)` : 'Bon de commande';
+  const pdfNom = `${MODE_CS?'Proforma':'Commande'}_Hydratis_${m.v}${pos?'_'+m.c:''}_${dateJour}`.replace(/[^\w\-]+/g,'_')+'.pdf';
+  const pdfData = {
+    titre: pdfTitre, operation: opLigne, date: dateJour,
+    infos: [['Magasin',`INTERSPORT ${m.v} — ${m.r}`],['Ville',`${m.v} (${m.cp})`],['Code client',m.c],['Groupement',m.g||'-'],
+            ...(v('c_bt49')?[['Code BT-49',v('c_bt49')]]:[]),['Contact',contactVal],['Téléphone',v('c_tel')||'-'],['Email',emailVal],
+            ...(v('c_notes')?[['Notes',v('c_notes')]]:[])],
+    sections: sections.map(s=>({titre:s.titre, items:s.items})),
+    plv: plvSel,
+    totaux,
+    mention: mentionDoc,
+    commercial: emailCommercial
+  };
 
-const emailCommercial =
-  COMMERCIAUX[dept] || COMMERCIAUX[MAG_SELECTED?.d] || DESTINATAIRE;
-
-let intro, outro;
-if(!MODE_CS){
-  intro='Bonjour,\n\nMerci pour votre commande.\n\nVotre demande a bien été transmise. Notre équipe commerciale la traitera dans les meilleurs délais.\n\nVous trouverez ci-dessous le récapitulatif de votre commande.\n\n';
-  outro='\n\nCet e-mail est généré automatiquement.\nMerci de ne pas y répondre.\n\nPour toute question concernant votre commande, contactez votre commercial : '+emailCommercial+'\n';
-} else if(CS_MODE==='implantation'){
-  intro='Bonjour'+(contactVal?' '+contactVal:'')+',\n\nSuite à notre échange, je vous propose l\'implantation de la gamme Hydratis dans votre magasin INTERSPORT '+m.v+'.\n\nVous trouverez ci-dessous la proforma détaillant l\'assortiment de lancement conseillé (produits et matériels PLV), ainsi que les conditions tarifaires associées.\n\n';
-  outro='\n\nCette proposition n\'a pas valeur de commande.\nPour la valider, cliquez sur le bouton « Je valide la proposition ». Pour l\'ajuster, répondez simplement à cet e-mail.\n\nJe reste à votre disposition pour organiser la mise en place en magasin.\n\nBien cordialement,\nVotre commercial Hydratis\n'+emailCommercial+'\n';
-} else {
-  intro='Bonjour'+(contactVal?' '+contactVal:'')+',\n\nSuite à l\'analyse de vos ventes et de votre stock, je vous propose le réassort Hydratis suivant pour votre magasin INTERSPORT '+m.v+'.\n\nVous trouverez ci-dessous le récapitulatif de la proposition.\n\n';
-  outro='\n\nCette proposition n\'a pas valeur de commande.\nPour la valider, cliquez sur le bouton « Je valide la proposition ». Pour modifier les quantités, répondez simplement à cet e-mail.\n\nBien cordialement,\nVotre commercial Hydratis\n'+emailCommercial+'\n';
+  return {m, magasin, magLbl:`${magasin}${m.cp?` (${m.cp})`:''}`, o, opLigne, docTitre, magTxt, contactTxt, notesTxt, enteteTxt,
+          recapTxt, recapHtml, recapCourt, mentionDoc, dateJour, emailCommercial, bt49Val:v('c_bt49'), pdfNom, pdfData};
 }
 
-// Adresses des bons de commande en ligne, rappelées en bas de chaque mail (Hydratis Intersport + Andros Sport)
-const SITES_BTOB = [['Hydratis','https://hydratis-its.pages.dev'],['Andros Sport','https://andros-sport.pages.dev']];
-const sitesTxt = '\nVos bons de commande en ligne :\n'+SITES_BTOB.map(([n,u])=>`  • ${n} : ${u}`).join('\n')+'\n';
-const sitesHtml = '<p style="font-family:Segoe UI,Arial,sans-serif;font-size:14px;color:#0c2434;margin:14px 0 0"><strong>Vos bons de commande en ligne :</strong><br>'+
-  SITES_BTOB.map(([n,u])=>`${n} : <a href="${u}" target="_blank" style="color:#0673a3">${u}</a>`).join('<br>')+'</p>';
+document.getElementById('bb_btn').addEventListener('click',async function(){
+  if(ORDER_SENT || this.classList.contains('disabled'))return;
+  const btn = this;
+  // Multi-magasins : chaque onglet est contrôlé puis mis en forme à tour de rôle (un seul onglet = commande classique)
+  if(MULTI) STORES[STORE_CUR] = snapStore();
+  const nb = STORES.length, multi = nb>1, retour = STORE_CUR;
+  const onglet = i => `Magasin ${i+1}${MAG_SELECTED?` (INTERSPORT ${MAG_SELECTED.v})`:''}`;
 
-// Mode commercial : bouton « Je valide la proposition ». {{ACCEPT_URL}} est remplacé par le worker
-// mailer par un lien signé qui renvoie la validation au commercial (client en copie).
-const acceptBtnHtml =
-  '<table role="presentation" cellspacing="0" cellpadding="0" style="margin:22px 0"><tr><td style="background:#138a52;border-radius:10px">'+
-  '<a href="{{ACCEPT_URL}}" target="_blank" style="display:inline-block;padding:14px 26px;color:#ffffff;font-weight:800;font-size:16px;text-decoration:none;font-family:Segoe UI,Arial,sans-serif">✅ Je valide la proposition</a>'+
-  '</td></tr></table>';
-// Mention de la pièce jointe : ajoutée seulement si le PDF a bien été généré
-const pjLigne = MODE_CS
-  ? '📎 Retrouvez la proforma détaillée (remises, SKU et gencodes) dans le PDF joint.'
-  : '📎 Le détail complet (remises, SKU et gencodes) figure dans le PDF joint, prêt à imprimer.';
-const bt49Val = v('c_bt49');
-const buildEmailBody = avecPdf =>
-  intro + enteteTxt + '\n' + recapTxt +
-  (avecPdf ? '\n\n'+pjLigne : '') +
-  (MODE_CS ? '\n\n👉 Valider la proposition en un clic : {{ACCEPT_URL}}' : '') +
-  outro + sitesTxt;
-const buildEmailHtml = avecPdf => {
-  let h = preHtml(intro) + preHtml(enteteTxt) + recapHtml +
-    (avecPdf ? `<p style="font-family:Segoe UI,Arial,sans-serif;font-size:14px;font-weight:700;color:#0673a3;background:#e3f5fc;border-radius:8px;padding:10px 12px;margin:14px 0 0;max-width:616px">${escHtml(pjLigne)}</p>` : '') +
-    (MODE_CS ? acceptBtnHtml+preHtml(outro.replace(/^\n+/,'')) : preHtml(outro)) + sitesHtml;
-  if(bt49Val) h = h.replace('Code BT-49 : '+escHtml(bt49Val),'<strong style="color:#e11d2e">Code BT-49 : '+escHtml(bt49Val)+'</strong>');
-  return h;
-};
-
-// Récap simplifié (page de confirmation + mail « proposition validée ») : produit, UC, votre prix HT, total
-const recapCourt = {
-  lignes: sections.filter(s=>s.items.length).flatMap(s=>[{sec:s.titre}, ...s.items.map(it=>({n:it.name, uc:it.qte, pu:fmt(it.nn), t:fmt(it.total), off:!!it.free,
-    pb: it.free?'-':fmt(it.base), rms: REMISES_AFF.map(([,r])=>it.free?'OFFERT':remPct(r))}))]),
-  remises: remLbls,
-  plv: plvSel,
-  ...(plvOp ? {plvOp} : {}),
-  totaux
-};
-
-// PDF joint au mail (bon de commande ou proforma)
-const pdfTitre = MODE_CS ? `${CS_LABELS[CS_MODE].titre} (proforma)` : 'Bon de commande';
-const pdfNom = `${MODE_CS?'Proforma':'Commande'}_Hydratis_${m.v}_${dateJour}`.replace(/[^\w\-]+/g,'_')+'.pdf';
-const pdfData = {
-  titre: pdfTitre, operation: opLigne, date: dateJour,
-  infos: [['Magasin',`INTERSPORT ${m.v} — ${m.r}`],['Ville',`${m.v} (${m.cp})`],['Code client',m.c],['Groupement',m.g||'-'],
-          ...(v('c_bt49')?[['Code BT-49',v('c_bt49')]]:[]),['Contact',contactVal],['Téléphone',v('c_tel')||'-'],['Email',emailVal],
-          ...(v('c_notes')?[['Notes',v('c_notes')]]:[])],
-  sections: sections.map(s=>({titre:s.titre, items:s.items})),
-  plv: plvSel,
-  totaux,
-  mention: mentionDoc,
-  commercial: emailCommercial
-};
-
-const btn = this;
-const label = btn.textContent;
-btn.classList.add('disabled');
-btn.textContent = 'Envoi en cours…';
-buildPdfBase64(pdfData).catch(err=>{ console.warn('PDF non généré', err); return null; }).then(pdf64=>{
-  const attachments = pdf64 ? [{name:pdfNom, content:pdf64}] : undefined;
-  const emailBody = buildEmailBody(!!pdf64);
-  const emailHtml = buildEmailHtml(!!pdf64);
-  const request = {
-  method:'POST',
-  headers:{'Content-Type':'application/json'},
-  // Mode commercial : la proposition part au magasin, copie au commercial (+ DESTINATAIRE pour traçabilité),
-  // et le magasin répond directement au commercial.
-  body:JSON.stringify(MODE_CS
-    ? {to:emailVal,cc:[...new Set([emailCommercial,DESTINATAIRE])],subject:objet,body:emailBody,html:emailHtml,replyTo:emailCommercial,attachments,
-       accept:{commercial:emailCommercial,dest:DESTINATAIRE,magasin:`${magasin}${m.cp?` (${m.cp})`:''}`,contact:contactVal,titre:CS_LABELS[CS_MODE].titre,...recapCourt}}
-    : {to:emailCommercial,cc:[DESTINATAIRE,emailVal].filter(Boolean),subject:objet,body:emailBody,html:emailHtml,replyTo:emailVal||undefined,attachments})
-  };
-  return MAIL_SIMULATION ? simulateMail(JSON.parse(request.body)) : fetch(MAILER_URL, request);
-}).then(res=>{
-  if(!res.ok)throw new Error('send failed');
-  return res.json();
-}).then(data=>{
-  if(!data.ok)throw new Error(data.error||'send failed');
-  if (MAIL_SIMULATION) {
-    btn.textContent = label;
-    recompute();
+  for(let i=0;i<nb;i++){
+    if(multi) showStore(i);
+    if(!checkStore(multi ? onglet(i) : '')) return;
+  }
+  const contactEl = document.getElementById('c_contact');
+  const emailEl   = document.getElementById('c_email');
+  const contactVal = contactEl.value.trim();
+  const emailVal   = emailEl.value.trim();
+  contactEl.classList.toggle('input-error', !contactVal);
+  emailEl.classList.toggle('input-error',   !emailVal);
+  if(!contactVal || !emailVal){
+    alert("Merci de renseigner le contact et l'email avant d'envoyer la commande.");
+    (!contactVal ? contactEl : emailEl).focus();
     return;
   }
-  ORDER_SENT = true;
-  alert(MODE_CS ? 'Proposition envoyée au magasin avec succès !' : 'Commande envoyée avec succès !');
-  btn.textContent = MODE_CS ? '✓ Proposition envoyée' : '✓ Commande envoyée';
-  btn.classList.add('disabled');
-  btn.disabled = true;
-}).catch(()=>{
-  alert(MODE_CS ? "Erreur lors de l'envoi de la proposition. Merci de réessayer." : "Erreur lors de l'envoi de la commande. Merci de réessayer ou de contacter votre commercial.");
-  btn.textContent = label;
-  recompute();
-});
+  // Questions posées magasin par magasin avant l'envoi
+  const plvReps = [];
+  for(let i=0;i<nb;i++){
+    if(multi) showStore(i);
+    const o = window.ORDER, nom = multi ? onglet(i) : '';
+    // Magasin : PLV de sol offerte(s) par l'opération → on demande s'il souhaite la recevoir (fermé sans réponse : rien n'est envoyé)
+    let plvRep = null;
+    if(!MODE_CS && o.plvSolOffertes>0){
+      plvRep = await new Promise(done=>askPlvOp(o.plvSolOffertes, done, nom));
+      if(plvRep===null) return;
+    }
+    // Mode commercial : gratuits de l'opération pas (ou pas tous) sélectionnés
+    if(MODE_CS && o.free > o.freeCs8 &&
+       !confirm((nom?nom+'\n\n':'')+csOpMessage(o.totalDisplaysCmd, o.free, o.freeCs8).txt+"\n\nEnvoyer quand même la proposition sans ces gratuits ?")) return;
+    // Magasin : displays offerts pas (ou pas tous) choisis → prévenir de l'attribution automatique
+    if(!MODE_CS && o.free > o.freeCs8 && !confirmOffertsAuto(o.free - o.freeCs8, nom)) return;
+    plvReps.push(plvRep);
+  }
+  const docs = [];
+  for(let i=0;i<nb;i++){
+    if(multi) showStore(i);
+    docs.push(buildStoreDoc(plvReps[i], multi ? {n:i+1, nb} : null));
+  }
+  if(multi) showStore(retour);
 
+  const d0 = docs[0], dateJour = d0.dateJour;
+  // Un commercial par secteur : le premier est destinataire, tous les autres sont en copie
+  const commerciaux = [...new Set(docs.map(d=>d.emailCommercial))];
+  const emailCommercial = commerciaux[0];
+  const villes = docs.map(d=>d.m.v).join(', ');
+  const lieux = `${nb} magasins Intersport (${villes.length>90 ? villes.slice(0,88)+'…' : villes})`;
+  const objet = (MODE_CS ? `${CS_LABELS[CS_MODE].titre} Hydratis` : 'Commande Hydratis BtoB')+
+    ` — ${multi ? lieux : d0.magLbl} — ${dateJour}`;
+
+  const signature = `\n\nBien cordialement,\n${commerciaux.length>1?'Vos commerciaux':'Votre commercial'} Hydratis\n${commerciaux.join(', ')}\n`;
+  let intro, outro;
+  if(!MODE_CS){
+    intro = multi
+      ? `Bonjour,\n\nMerci pour vos commandes.\n\nVotre demande a bien été transmise pour vos ${nb} magasins. Notre équipe commerciale la traitera dans les meilleurs délais.\n\nVous trouverez ci-dessous le récapitulatif magasin par magasin, puis le total général.\n\n`
+      : 'Bonjour,\n\nMerci pour votre commande.\n\nVotre demande a bien été transmise. Notre équipe commerciale la traitera dans les meilleurs délais.\n\nVous trouverez ci-dessous le récapitulatif de votre commande.\n\n';
+    outro='\n\nCet e-mail est généré automatiquement.\nMerci de ne pas y répondre.\n\nPour toute question concernant '+(multi?'vos commandes':'votre commande')+', contactez votre commercial : '+commerciaux.join(', ')+'\n';
+  } else if(CS_MODE==='implantation'){
+    intro='Bonjour'+(contactVal?' '+contactVal:'')+',\n\nSuite à notre échange, je vous propose l\'implantation de la gamme Hydratis dans '+(multi?'vos '+lieux:'votre magasin INTERSPORT '+d0.m.v)+'.\n\nVous trouverez ci-dessous'+(multi?', magasin par magasin,':'')+' la proforma détaillant l\'assortiment de lancement conseillé (produits et matériels PLV), ainsi que les conditions tarifaires associées.\n\n';
+    outro='\n\nCette proposition n\'a pas valeur de commande.\nPour la valider, cliquez sur le bouton « Je valide la proposition »'+(multi?' : vous choisirez les magasins à valider, un par un ou tous ensemble':'')+'. Pour l\'ajuster, répondez simplement à cet e-mail.\n\nJe reste à votre disposition pour organiser la mise en place en magasin.'+signature;
+  } else {
+    intro='Bonjour'+(contactVal?' '+contactVal:'')+',\n\nSuite à l\'analyse de vos ventes et de votre stock, je vous propose le réassort Hydratis suivant pour '+(multi?'vos '+lieux:'votre magasin INTERSPORT '+d0.m.v)+'.\n\nVous trouverez ci-dessous le récapitulatif de la proposition'+(multi?', magasin par magasin, puis le total général':'')+'.\n\n';
+    outro='\n\nCette proposition n\'a pas valeur de commande.\nPour la valider, cliquez sur le bouton « Je valide la proposition »'+(multi?' : vous choisirez les magasins à valider, un par un ou tous ensemble':'')+'. Pour modifier les quantités, répondez simplement à cet e-mail.'+signature;
+  }
+
+  // Adresses des bons de commande en ligne, rappelées en bas de chaque mail (Hydratis Intersport + Andros Sport)
+  const SITES_BTOB = [['Hydratis','https://hydratis-its.pages.dev'],['Andros Sport','https://andros-sport.pages.dev']];
+  const sitesTxt = '\nVos bons de commande en ligne :\n'+SITES_BTOB.map(([n,u])=>`  • ${n} : ${u}`).join('\n')+'\n';
+  const sitesHtml = '<p style="font-family:Segoe UI,Arial,sans-serif;font-size:14px;color:#0c2434;margin:14px 0 0"><strong>Vos bons de commande en ligne :</strong><br>'+
+    SITES_BTOB.map(([n,u])=>`${n} : <a href="${u}" target="_blank" style="color:#0673a3">${u}</a>`).join('<br>')+'</p>';
+
+  // Mode commercial : bouton « Je valide la proposition ». {{ACCEPT_URL}} est remplacé par le worker
+  // mailer par un lien signé qui renvoie la validation au commercial (client en copie).
+  const acceptBtnHtml =
+    '<table role="presentation" cellspacing="0" cellpadding="0" style="margin:22px 0"><tr><td style="background:#138a52;border-radius:10px">'+
+    '<a href="{{ACCEPT_URL}}" target="_blank" style="display:inline-block;padding:14px 26px;color:#ffffff;font-weight:800;font-size:16px;text-decoration:none;font-family:Segoe UI,Arial,sans-serif">✅ Je valide la proposition</a>'+
+    '</td></tr></table>';
+  // Mention de la pièce jointe : ajoutée seulement si le PDF a bien été généré
+  const pjLigne = multi
+    ? (MODE_CS ? '📎 Retrouvez la proforma détaillée de chaque magasin (remises, SKU et gencodes) dans les PDF joints.'
+               : '📎 Le détail complet de chaque magasin (remises, SKU et gencodes) figure dans les PDF joints, prêts à imprimer.')
+    : (MODE_CS ? '📎 Retrouvez la proforma détaillée (remises, SKU et gencodes) dans le PDF joint.'
+               : '📎 Le détail complet (remises, SKU et gencodes) figure dans le PDF joint, prêt à imprimer.');
+  const bt49Rouge = (h, bt49) => bt49 ? h.replace('Code BT-49 : '+escHtml(bt49),'<strong style="color:#e11d2e">Code BT-49 : '+escHtml(bt49)+'</strong>') : h;
+
+  // Multi-magasins : contact commun en tête, un bloc par magasin, puis le total général
+  const somme = k => round2(docs.reduce((n,d)=>n+d.o[k],0));
+  const totauxGen = [['Total HT',fmt(somme('totalHT'))],['TVA 5,5 %',fmt(somme('tva55'))],['TVA 20 %',fmt(somme('tva20'))],['Total TTC',fmt(somme('ttc'))]];
+  const titreMag = (d,i) => `MAGASIN ${i+1}/${nb} — ${d.magLbl}`;
+  const corpsTxt = !multi ? d0.enteteTxt + '\n' + d0.recapTxt :
+    `${d0.docTitre}\n${d0.opLigne}\n\nCONTACT\n${d0.contactTxt}\n`+
+    docs.map((d,i)=>`${SEP}\n${titreMag(d,i)}\n${d.magTxt}${d.notesTxt}\n${d.recapTxt}\n\n`).join('')+
+    `${SEP}\nTOTAL GÉNÉRAL — ${nb} MAGASINS\n`+
+    docs.map(d=>`  • ${d.magLbl} : ${fmt(d.o.totalHT)} HT · ${fmt(d.o.ttc)} TTC`).join('\n')+'\n'+SEP+'\n'+
+    totauxGen.map(([k,val])=>`${k} : ${val}`).join('\n')+'\n\n'+d0.mentionDoc;
+  const corpsHtml = !multi ? preHtml(d0.enteteTxt) + d0.recapHtml :
+    preHtml(`${d0.docTitre}\n${d0.opLigne}\n\nCONTACT\n${d0.contactTxt}`)+
+    docs.map((d,i)=>
+      `<p style="font-family:Segoe UI,Arial,sans-serif;max-width:616px;background:#0a9bd4;color:#fff;font-weight:800;font-size:15px;padding:10px 12px;border-radius:8px;margin:26px 0 8px">${escHtml(titreMag(d,i))}</p>`+
+      bt49Rouge(preHtml(d.magTxt+d.notesTxt), d.bt49Val)+d.recapHtml).join('')+
+    '<table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;max-width:640px;border-collapse:collapse;margin:30px 0 0">'+
+    `<tr><th style="${TH}text-align:left">Total général — ${nb} magasins</th><th style="${TH}text-align:right">Total HT</th><th style="${TH}text-align:right">Total TTC</th></tr>`+
+    docs.map(d=>`<tr><td style="${TD}">${escHtml(d.magLbl)}</td><td style="${TD}text-align:right;white-space:nowrap">${fmt(d.o.totalHT)}</td><td style="${TD}text-align:right;white-space:nowrap;font-weight:700">${fmt(d.o.ttc)}</td></tr>`).join('')+
+    totauxGen.map(([k,val],i)=>{
+      const st = (i===totauxGen.length-1 ? 'background:#0c2434;color:#fff;font-weight:800;' : 'font-weight:700;')+(i===0?'border-top:3px solid #0c2434;padding-top:12px;':'');
+      return `<tr><td colspan="2" style="${TD}${st}text-align:right">${k}</td><td style="${TD}${st}text-align:right;white-space:nowrap">${val}</td></tr>`;
+    }).join('')+
+    '</table>'+
+    `<p style="font-family:Segoe UI,Arial,sans-serif;font-size:12px;color:#5d7080;margin:8px 0 0">${escHtml(d0.mentionDoc)}</p>`;
+
+  const buildEmailBody = avecPdf =>
+    intro + corpsTxt +
+    (avecPdf ? '\n\n'+pjLigne : '') +
+    (MODE_CS ? '\n\n👉 Valider la proposition en un clic : {{ACCEPT_URL}}' : '') +
+    outro + sitesTxt;
+  const buildEmailHtml = avecPdf => {
+    const h = preHtml(intro) + corpsHtml +
+      (avecPdf ? `<p style="font-family:Segoe UI,Arial,sans-serif;font-size:14px;font-weight:700;color:#0673a3;background:#e3f5fc;border-radius:8px;padding:10px 12px;margin:14px 0 0;max-width:616px">${escHtml(pjLigne)}</p>` : '') +
+      (MODE_CS ? acceptBtnHtml+preHtml(outro.replace(/^\n+/,'')) : preHtml(outro)) + sitesHtml;
+    return multi ? h : bt49Rouge(h, d0.bt49Val);
+  };
+
+  const label = btn.textContent;
+  btn.classList.add('disabled');
+  btn.textContent = 'Envoi en cours…';
+  try{
+    // Un PDF par magasin, générés l'un après l'autre
+    const attachments = [];
+    for(const d of docs){
+      const pdf64 = await buildPdfBase64(d.pdfData).catch(err=>{ console.warn('PDF non généré', err); return null; });
+      if(pdf64) attachments.push({name:d.pdfNom, content:pdf64});
+    }
+    const avecPdf = attachments.length>0;
+    const emailBody = buildEmailBody(avecPdf);
+    const emailHtml = buildEmailHtml(avecPdf);
+    // Récap de la page de validation : un magasin = récap direct ; plusieurs = un récap par magasin (validés un par un)
+    const recapAccept = multi
+      ? {stores:docs.map(d=>({magasin:d.magLbl, commercial:d.emailCommercial, ...d.recapCourt})), totaux:totauxGen}
+      : d0.recapCourt;
+    const request = {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      // Mode commercial : la proposition part au magasin, copie au(x) commercial(aux) (+ DESTINATAIRE pour traçabilité),
+      // et le magasin répond directement au commercial.
+      body:JSON.stringify(MODE_CS
+        ? {to:emailVal,cc:[...new Set([...commerciaux,DESTINATAIRE])],subject:objet,body:emailBody,html:emailHtml,replyTo:emailCommercial,attachments:avecPdf?attachments:undefined,
+           accept:{commercial:emailCommercial,dest:DESTINATAIRE,magasin:multi?`${nb} magasins : ${villes}`:d0.magLbl,contact:contactVal,titre:CS_LABELS[CS_MODE].titre,...recapAccept}}
+        : {to:emailCommercial,cc:[...commerciaux.slice(1),DESTINATAIRE,emailVal].filter(Boolean),subject:objet,body:emailBody,html:emailHtml,replyTo:emailVal||undefined,attachments:avecPdf?attachments:undefined})
+    };
+    const res = await (MAIL_SIMULATION ? simulateMail(JSON.parse(request.body)) : fetch(MAILER_URL, request));
+    if(!res.ok)throw new Error('send failed');
+    const data = await res.json();
+    if(!data.ok)throw new Error(data.error||'send failed');
+    if (MAIL_SIMULATION) {
+      btn.textContent = label;
+      recompute();
+      return;
+    }
+    ORDER_SENT = true;
+    alert(MODE_CS ? 'Proposition envoyée au magasin avec succès !' : (multi ? 'Commandes envoyées avec succès !' : 'Commande envoyée avec succès !'));
+    btn.textContent = MODE_CS ? '✓ Proposition envoyée' : (multi ? '✓ Commandes envoyées' : '✓ Commande envoyée');
+    btn.classList.add('disabled');
+    btn.disabled = true;
+  }catch{
+    alert(MODE_CS ? "Erreur lors de l'envoi de la proposition. Merci de réessayer." : "Erreur lors de l'envoi de la commande. Merci de réessayer ou de contacter votre commercial.");
+    btn.textContent = label;
+    recompute();
+  }
 });
 
 // ===== PDF (jsPDF 2.5.1 + autotable 3.8.2 + JsBarcode 3.11.6) =====
@@ -2409,7 +2642,7 @@ function barcodePng(ean){
 }
 async function buildPdfBase64(d){
   await loadPdfLibs();
-  const doc = new window.jspdf.jsPDF({unit:'mm', format:'a4'});
+  const doc = new window.jspdf.jsPDF({unit:'mm', format:'a4', compress:true});  // compressé : une commande multi-magasins joint un PDF par magasin
   const W = doc.internal.pageSize.getWidth(), H = doc.internal.pageSize.getHeight(), M = 14;
   const ENCRE=[12,36,52], GRIS=[93,112,128], VERT=[19,138,82], ROUGE=[225,29,46], FOND=[238,243,246];
 
@@ -2512,24 +2745,26 @@ const PLV_NOMS = {
 function getPlvQty(ref){
   return Math.max(0, parseInt(document.querySelector(`.plv-qty[data-plv="${ref}"]`)?.value||0)||0);
 }
-let plvOpChoix = null;  // réponse du magasin à askPlvOp : null = pas encore posée, sinon quantité souhaitée (0 = aucune)
-function askPlvOp(n, done){
+// done(quantité souhaitée, 0 = aucune) ; done(null) si la fenêtre est fermée sans réponse. nom : onglet concerné en multi-magasins.
+function askPlvOp(n, done, nom){
   const d = document.createElement('dialog');
   d.className = 'plvop-dlg';
+  let reponse = null;
   // Un bouton par quantité possible : « Non merci / Oui » pour 1 offerte, « Aucune / 1 seulement / Les 2 » pour 2
   const lbl = q => q===0 ? (n>1?'Aucune':'Non merci') : n===1 ? 'Oui' : q===n ? `Les ${n}` : `${q} seulement`;
   d.innerHTML =
     '<h3>PLV de sol offerte</h3>'+
+    (nom ? `<p><b>${nom}</b></p>` : '')+
     `<p>Avec l'Opération Gratuité, votre commande vous donne droit à <b>${n} PLV de sol offerte${n>1?'s':''}</b>.</p>`+
     `<p>${n>1?'Combien souhaitez-vous en recevoir':'Souhaitez-vous la recevoir'} avec votre commande ?</p>`+
     '<div class="plvop-btns">'+Array.from({length:n+1},(_,q)=>`<button type="button" data-rep="${q}"${q===n?' class="oui"':''}>${lbl(q)}</button>`).join('')+'</div>';
   d.addEventListener('click', e=>{
     const rep = e.target.closest('[data-rep]')?.dataset.rep;
     if(rep===undefined) return;
+    reponse = parseInt(rep);
     d.close();
-    done(parseInt(rep));
   });
-  d.addEventListener('close', ()=>d.remove());  // fermé sans réponse (Échap) : rien n'est envoyé
+  d.addEventListener('close', ()=>{ d.remove(); done(reponse); });  // fermé sans réponse (Échap) : rien n'est envoyé
   document.body.appendChild(d);
   d.showModal();
 }
@@ -2618,15 +2853,28 @@ function renderResults(list){
   });
 }
 
-function selectMag(i){
-  const m = MAGASINS[i];
+// Affiche le magasin m dans le formulaire (null = retour au champ de recherche)
+function setMag(m){
   MAG_SELECTED = m;
-  document.getElementById('ms_nom').textContent = `INTERSPORT ${m.v} — ${m.r}`;
-  document.getElementById('ms_detail').textContent = `${m.g?'Groupe '+m.g+' · ':''}${m.cp} · Dpt ${m.d} · Code client ${m.c}`;
-  selectedEl.style.display = 'flex';
-  searchEl.parentNode.style.display = 'none';
+  if(m){
+    document.getElementById('ms_nom').textContent = `INTERSPORT ${m.v} — ${m.r}`;
+    document.getElementById('ms_detail').textContent = `${m.g?'Groupe '+m.g+' · ':''}${m.cp} · Dpt ${m.d} · Code client ${m.c}`;
+  } else searchEl.value = '';
+  selectedEl.style.display = m ? 'flex' : 'none';
+  searchEl.parentNode.style.display = m ? 'none' : 'block';
   resultsEl.classList.remove('show');
   routeSecteur();
+  multiRefresh();
+}
+function selectMag(i){
+  const m = MAGASINS[i];
+  // Multi-magasins : un magasin ne peut figurer que dans un seul onglet
+  const deja = STORES.findIndex((s,k)=>k!==STORE_CUR && s && s.mag===m);
+  if(deja>=0){
+    alert(`INTERSPORT ${m.v} est déjà dans votre commande (magasin ${deja+1}).`);
+    return;
+  }
+  setMag(m);
 }
 
 searchEl.addEventListener('input',()=>{
@@ -2639,17 +2887,203 @@ searchEl.addEventListener('input',()=>{
 });
 
 document.getElementById('ms_change').addEventListener('click',()=>{
-  MAG_SELECTED = null;
-  selectedEl.style.display = 'none';
-  searchEl.parentNode.style.display = 'block';
-  searchEl.value = '';
+  setMag(null);
   searchEl.focus();
-  routeSecteur();
 });
 
 document.addEventListener('click',(e)=>{
   if(!searchEl.contains(e.target) && !resultsEl.contains(e.target)) resultsEl.classList.remove('show');
 });
+
+// ===== COMMANDE MULTI-MAGASINS =====
+// Activée à la demande (lien sous les coordonnées) : par défaut la page reste un bon de commande pour un seul magasin.
+// Le formulaire affiche toujours le magasin courant (STORE_CUR) ; les autres onglets sont rangés dans STORES.
+// Contact, téléphone et e-mail sont communs ; magasin, BT-49, notes, panier et PLV sont propres à chaque onglet,
+// tout comme les paliers de l'opération, le franco et les offerts (calculés par recompute() sur l'onglet affiché).
+const MULTI_MAX = 12;
+let MULTI = false, STORE_CUR = 0;
+const STORES = [null];  // STORES[STORE_CUR] n'est à jour qu'au moment où l'on quitte l'onglet (snapStore)
+
+function snapStore(){
+  const plv = {};
+  PLV_REFS.forEach(r=>plv[r] = getPlvQty(r));
+  return {mag:MAG_SELECTED, bt49:document.getElementById('c_bt49').value, notes:document.getElementById('c_notes').value,
+          state:{...state}, free:{...stateFree}, fl:flasqueLots, plv, ht:window.ORDER.totalHT, ttc:window.ORDER.ttc};
+}
+// Remet un onglet dans le formulaire (s = null : onglet vierge)
+function loadStore(s){
+  Object.keys(state).forEach(ref=>state[ref] = s ? (s.state[ref]||0) : 0);
+  FREE_CAT.forEach(([,ref])=>stateFree[ref] = s ? (s.free[ref]||0) : 0);
+  flasqueLots = s ? s.fl : 0;
+  document.getElementById('fl-qty').value = flasqueLots;
+  document.querySelectorAll('.prod[data-ref]').forEach(card=>{
+    const ref = card.dataset.ref;
+    card.querySelector('.prod-top > .qty input').value = state[ref];
+    card.classList.toggle('active', state[ref]>0 || (stateFree[ref]||0)>0);
+    card.classList.remove('open');
+  });
+  document.getElementById('flasque-card').classList.remove('open');
+  document.querySelectorAll('input[data-free-ref]').forEach(inp=>{
+    const q = stateFree[inp.dataset.freeRef]||0;
+    inp.value = q;
+    inp.closest('.cs-free').classList.toggle('on', q>0);
+  });
+  PLV_REFS.forEach(r=>{ document.querySelector(`.plv-qty[data-plv="${r}"]`).value = s ? (s.plv[r]||0) : 0; });
+  document.getElementById('c_bt49').value = s ? s.bt49 : '';
+  document.getElementById('c_notes').value = s ? s.notes : '';
+  recompute();
+  setMag(s ? s.mag : null);
+}
+function showStore(i){
+  if(i===STORE_CUR) return;
+  STORES[STORE_CUR] = snapStore();
+  STORE_CUR = i;
+  loadStore(STORES[i]);
+}
+// Nouvel onglet : vierge, ou copie du panier affiché (le magasin, le BT-49 et les notes restent à saisir)
+function addStore(dupliquer){
+  if(STORES.length>=MULTI_MAX){ alert(`Vous pouvez regrouper jusqu'à ${MULTI_MAX} magasins par envoi.`); return; }
+  STORES[STORE_CUR] = snapStore();
+  STORES.push(dupliquer ? {...STORES[STORE_CUR], mag:null, bt49:'', notes:''} : null);
+  STORE_CUR = STORES.length-1;
+  loadStore(STORES[STORE_CUR]);
+  document.getElementById('multiGroup').scrollIntoView({block:'start'});
+  searchEl.focus({preventScroll:true});
+}
+function removeStore(){
+  if(STORES.length<2) return;
+  const info = storeInfo(STORE_CUR);
+  if((info.mag || info.ht>0) && !confirm(`Retirer ${info.nom} et son panier de ${MODE_CS?'la proposition':'la commande'} ?`)) return;
+  STORES.splice(STORE_CUR,1);
+  STORE_CUR = Math.min(STORE_CUR, STORES.length-1);
+  loadStore(STORES[STORE_CUR]);
+}
+// Magasin et totaux de l'onglet i (valeurs en direct pour l'onglet affiché)
+function storeInfo(i){
+  const cur = i===STORE_CUR, s = STORES[i];
+  const mag = cur ? MAG_SELECTED : (s ? s.mag : null);
+  return {mag, nom: mag ? `INTERSPORT ${mag.v}` : `Magasin ${i+1}`,
+          ht: cur ? window.ORDER.totalHT : (s ? s.ht : 0), ttc: cur ? window.ORDER.ttc : (s ? s.ttc : 0)};
+}
+// Onglets, récap par magasin et total général : appelé à chaque recompute() et à chaque changement de magasin
+function multiRefresh(){
+  if(!MULTI) return;
+  const infos = STORES.map((_,i)=>storeInfo(i));
+  const nb = infos.length;
+  document.getElementById('multiTabs').innerHTML =
+    infos.map((s,i)=>`<button type="button" class="multi-tab${i===STORE_CUR?' active':''}" data-store="${i}">`+
+      `<span class="mt-nom">${i+1} · ${s.mag ? s.nom : 'À sélectionner'}</span><span class="mt-tot">${fmt(s.ht)} HT</span></button>`).join('')+
+    (nb<MULTI_MAX ? '<button type="button" class="multi-tab add" data-store="add">+ Ajouter un magasin</button>' : '');
+  document.getElementById('multiBarTitle').textContent = `${MODE_CS?'Magasins de la proposition':'Vos magasins'} (${nb})`;
+  document.getElementById('clientTitle').textContent = nb>1 ? `Magasin ${STORE_CUR+1} sur ${nb}` : 'Votre magasin';
+  document.getElementById('multiDel').style.display = nb>1 ? '' : 'none';
+  document.getElementById('recapHead').textContent =
+    (MODE_CS ? CS_LABELS[CS_MODE].titre+' — Proforma' : 'Récapitulatif de la commande')+(nb>1 ? ' — '+infos[STORE_CUR].nom : '');
+  document.getElementById('francoVal').textContent = fmt(FRANCO_MIN)+' HT minimum'+(nb>1?' par magasin':'');
+  // Récap général (dès 2 magasins) : une ligne par magasin, cliquable pour y revenir
+  document.getElementById('multiRecap').style.display = nb>1 ? '' : 'none';
+  document.getElementById('multiRecapHead').textContent = `${MODE_CS?'Proposition':'Commande'} groupée — ${nb} magasins`;
+  document.getElementById('multiRecapList').innerHTML = infos.map((s,i)=>{
+    const alerte = !s.mag ? 'Magasin à sélectionner' : s.ht<FRANCO_MIN ? `Franco de ${fmt(FRANCO_MIN)} HT non atteint` : '';
+    return `<div class="mr-line${i===STORE_CUR?' cur':''}" data-store="${i}"><span class="mr-nom">${i+1} · ${s.nom}`+
+      (alerte ? `<span class="mr-warn">⚠️ ${alerte}</span>` : '')+
+      `</span><span class="mr-val">${fmt(s.ttc)}<small>${fmt(s.ht)} HT</small></span></div>`;
+  }).join('');
+  const ttcGen = round2(infos.reduce((n,s)=>n+s.ttc,0));
+  set('multiRecapTtc', fmt(ttcGen));
+  if(nb>1){
+    document.querySelector('.bottombar .bb-lbl').textContent = `Total TTC · ${nb} mag.`;
+    set('bb_ttc', fmt(ttcGen));
+    const btn = document.getElementById('bb_btn'), off = ORDER_SENT || ttcGen<=0;
+    btn.classList.toggle('disabled', off);
+    btn.disabled = off;
+  } else document.querySelector('.bottombar .bb-lbl').textContent = 'Total TTC';
+}
+function onStoreClick(e){
+  const cible = e.target.closest('[data-store]');
+  if(!cible) return;
+  if(cible.dataset.store==='add') return addStore(false);
+  const i = parseInt(cible.dataset.store);
+  showStore(i);
+  // Onglet sans magasin : on remonte au champ de recherche ; sinon on reste où l'on est (comparer deux paniers)
+  if(!MAG_SELECTED || cible.classList.contains('mr-line')) document.getElementById('multiGroup').scrollIntoView({block:'start'});
+}
+document.getElementById('multiTabs').addEventListener('click', onStoreClick);
+document.getElementById('multiRecapList').addEventListener('click', onStoreClick);
+document.getElementById('multiDup').addEventListener('click', ()=>addStore(true));
+document.getElementById('multiDel').addEventListener('click', removeStore);
+// Choix « Un seul magasin / Plusieurs magasins » en tête du bloc magasin
+function setMulti(on){
+  if(on===MULTI) return;
+  if(!on){
+    // Retour à un seul magasin : seul l'onglet affiché est conservé
+    if(STORES.length>1 && !confirm(`Revenir à un seul magasin ? Seul ${storeInfo(STORE_CUR).nom} est conservé, les autres paniers sont retirés.`)) return;
+    STORES.splice(0, STORES.length, null);
+    STORE_CUR = 0;
+    multiRefresh();  // remet les titres et la barre du bas comme pour une commande classique
+  }
+  MULTI = on;
+  ['multiBar','multiActs','multiHint','multiDup'].forEach(id=>document.getElementById(id).style.display = on ? '' : 'none');
+  document.querySelector('.bottombar').classList.toggle('multi', on);
+  document.querySelectorAll('#multiChoix button').forEach(b=>b.classList.toggle('active', (b.dataset.multi==='1')===on));
+  multiRefresh();
+}
+// Mode commercial : le choix est rangé dans l'encart « type de proposition »
+if(MODE_CS) document.getElementById('multiGroupTitle').textContent = 'Vous faites cette proposition pour';
+if(MODE_CS) document.getElementById('multiDup').textContent = 'DUPLIQUER LA PROPOSITION';
+if(MODE_CS) document.getElementById('csPanel').insertBefore(document.getElementById('multiGroup'), document.querySelector('#csPanel .cs-note'));
+document.getElementById('multiChoix').addEventListener('click', e=>{
+  const b = e.target.closest('[data-multi]');
+  if(b) setMulti(b.dataset.multi==='1');
+});
+
+// ===== REPRISE D'UNE PROPOSITION PAR LE MAGASIN =====
+// La page de validation d'une proposition offre un lien « Modifier » : il ouvre ce bon de commande avec
+// ?reprise=<magasin>|<magasin>… où chaque magasin vaut « code client;REF:qté;~REF:offerts;… » (voir repriseCode).
+// Le magasin ajuste puis envoie une commande classique : paliers, offerts et franco sont recalculés ici.
+// Les propositions avec gestes commerciaux (gratuits hors opération) ne sont pas reprises : modification par le commercial.
+function repriseCode(){
+  const lots = [MAG_SELECTED.c,
+    ...Object.keys(state).filter(ref=>state[ref]>0).map(ref=>`${ref}:${state[ref]}`),
+    ...(flasqueLots>0 ? [`FLAS_ACCROCHE_500:${flasqueLots}`] : []),
+    ...TUBES.filter(([,ref])=>(stateFree[ref]||0)>0).map(([,ref])=>`~${ref}:${stateFree[ref]}`),
+    ...PLV_REFS.filter(r=>getPlvQty(r)>0).map(r=>`${r}:${getPlvQty(r)}`)];
+  return lots.join(';');
+}
+let REPRISE = false;
+(function chargeReprise(){
+  const P = new URLSearchParams(location.search);
+  const code = P.get('reprise');
+  if(!code || MODE_CS) return;
+  const stores = code.split('|').slice(0, MULTI_MAX).map(bloc=>{
+    const [client, ...lots] = bloc.split(';');
+    const s = {mag:MAGASINS.find(m=>m.c===client)||null, bt49:'', notes:'', state:{}, free:{}, fl:0, plv:{}, ht:0, ttc:0};
+    lots.forEach(lot=>{
+      const [ref, q] = lot.replace(/^~/,'').split(':'), n = Math.max(0, parseInt(q)||0);
+      if(lot[0]==='~') s.free[ref] = n;
+      else if(ref==='FLAS_ACCROCHE_500') s.fl = n;
+      else if(PLV_REFS.includes(ref)) s.plv[ref] = n;
+      else if(ref in state) s.state[ref] = n;
+    });
+    return s;
+  }).filter(s=>s.mag);
+  if(!stores.length) return;
+  REPRISE = true;
+  cherryShown = true; bt49Shown = true;  // pas de fenêtres d'accueil : on arrive directement sur la commande
+  document.addEventListener('DOMContentLoaded', ()=>goTab('commande'));
+  if(P.get('rc')) document.getElementById('c_contact').value = P.get('rc');
+  if(P.get('re')) document.getElementById('c_email').value = P.get('re');
+  window.ORDER = {totalHT:0, ttc:0};  // lu par snapStore() avant le premier calcul
+  STORES.splice(0, STORES.length, ...stores);
+  if(stores.length>1){
+    setMulti(true);
+    // Chaque onglet est affiché une fois pour calculer ses totaux, puis on revient au premier
+    for(let i=stores.length-1;i>=0;i--){ STORE_CUR = i; loadStore(STORES[i]); STORES[i] = snapStore(); }
+  } else loadStore(stores[0]);
+  const info = document.getElementById('repriseInfo');
+  info.textContent = `Proposition de votre commercial reprise${stores.length>1?` pour vos ${stores.length} magasins`:''} : ajustez les quantités, puis validez la commande. Les displays offerts et le franco sont recalculés automatiquement.`;
+  info.style.display = '';
+})();
 
 recompute();
 
