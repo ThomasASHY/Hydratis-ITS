@@ -602,6 +602,7 @@
   <div class="cs-options">
     <button type="button" class="cs-opt active" data-csmode="reassort">🔁 Proposition de réassort</button>
     <button type="button" class="cs-opt" data-csmode="implantation">🏪 Proposition d'implantation</button>
+      <button type="button" class="cs-opt" data-csmode="reliquat">📦 Proposition de reliquat</button>
   </div>
   <div class="cs-note">Le récapitulatif devient une proforma. L'e-mail est envoyé au magasin (copie au commercial) et n'a pas valeur de commande tant que le magasin ne l'a pas validé.</div>
 </div>
@@ -1173,6 +1174,41 @@ document.getElementById('promoOctobre').style.display = PROMO_PERIOD==='octobre'
 // 🔧 Destinataire de la commande (ta boîte / service commandes)
 const DESTINATAIRE = "thomas.m@magnitude.fr";
 const MAILER_URL = "https://mailer.thomas-m-682.workers.dev";
+// ===== Suivi des commandes (dashboard /commandes) : AJOUT =====
+// Joint à l'envoi les lignes de commande structurées (réf, EAN, quantités, prix). Le mail et le PDF ne changent pas.
+// Si ce bloc échoue, l'envoi de la commande continue exactement comme avant.
+const ORDER_CID = (window.crypto&&crypto.randomUUID ? crypto.randomUUID() : String(Date.now())+Math.random().toString(16).slice(2)).replace(/[^\w-]/g,'').slice(0,40);
+function commandesPayload(docs){
+  return docs.map((d,i)=>{
+    const pd=d.pdfData||{};
+    const info=k=>{const v=((pd.infos||[]).find(x=>x[0]===k)||[])[1]; return (v==null||v==='-')?'':String(v);};
+    let cp='', ville='';
+    const cv=info('CP / Ville');
+    if(cv){ const m=cv.match(/^(\d{4,5})\s*(.*)$/); cp=m?m[1]:''; ville=m?m[2]:cv; }
+    else { const m=info('Ville').match(/^(.*?)\s*\((\d{4,5})\)\s*$/); if(m){ ville=m[1]==='-'?'':m[1]; cp=m[2]; } }
+    const lignes=(pd.sections||[]).flatMap(s=>s.items||[]).map(it=>{
+      const mq=String(it.sous||'').match(/^(\d+)\s+display/i); const q=mq?+mq[1]:it.uc;
+      return {ref:it.ref||'', ean:it.ean||'', nom:it.name, uc:it.uc, q, pcb:q?Math.round(it.uc/q):1, pu:it.nn, base:it.base, total:it.total, free:!!it.free};
+    });
+    const noms=(typeof PLV_NOMS!=='undefined')?PLV_NOMS:{};
+    const plv=(pd.plv||[]).map(p=>({ref:Object.keys(noms).find(k=>noms[k]===p.n)||'', nom:p.n, q:p.q}));
+    return {
+      cid:ORDER_CID+'-'+i,
+      label:d.magLbl||'',
+      proposition:!!MODE_CS,
+      type:MODE_CS?CS_MODE:'',
+      commercial:d.emailCommercial||'',
+      magasin:{nom:d.nom||d.name||d.magasin||info('Point de vente')||info('Raison sociale')||info('Magasin'), cp, ville, contact:info('Contact'), tel:info('Téléphone'), email:info('Email'), notes:info('Notes'), bt49:d.bt49Val||d.bt49||''},
+      lignes, plv,
+      totaux:{ttc:(d.o&&d.o.ttc)||(d.tot&&d.tot.ttc)||0},
+      pdf:d.pdfNom||''
+    };
+  });
+}
+function stringifyWithCommandes(docs, payload){
+  try{ payload.commandes=commandesPayload(docs); }catch(err){ console.warn('Suivi des commandes : lignes non jointes', err); }
+  return JSON.stringify(payload);
+}
 // En local, aucun envoi réel. ?simulation active aussi ce mode sur un hébergement.
 const MAIL_SIMULATION = ['localhost', '127.0.0.1', '[::1]', ''].includes(location.hostname)
   || new URLSearchParams(location.search).has('simulation');
@@ -1583,10 +1619,11 @@ let ORDER_SENT = false;
 // 🧑‍💼 MODE COMMERCIAL : ajoutez ?modecs à la fin de l'URL (ou &modecs si l'URL a déjà un « ? »,
 // ou #modecs). Donne accès aux propositions de réassort / d'implantation (récap = proforma).
 const MODE_CS = /(^|[?&#])modecs\b/i.test(window.location.search + window.location.hash);
-let CS_MODE = 'reassort'; // 'reassort' | 'implantation'
+let CS_MODE = 'reassort'; // 'reassort' | 'implantation' | 'reliquat'
 const CS_LABELS = {
   reassort:     {titre:'Proposition de réassort',     court:'réassort'},
-  implantation: {titre:"Proposition d'implantation",  court:'implantation'}
+  implantation: {titre:"Proposition d'implantation",  court:'implantation'},
+  reliquat:     {titre:'Proposition de reliquat',     court:'reliquat'}
 };
 function applyCsMode(){
   if(!MODE_CS) return;
@@ -2446,9 +2483,9 @@ document.getElementById('bb_btn').addEventListener('click',async function(){
   const contactVal = contactEl.value.trim();
   const emailVal   = emailEl.value.trim();
   contactEl.classList.toggle('input-error', !contactVal);
-  emailEl.classList.toggle('input-error',   !emailVal);
-  if(!contactVal || !emailVal){
-    alert("Merci de renseigner le contact et l'email avant d'envoyer la commande.");
+  emailEl.classList.toggle('input-error',   !emailVal || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal));
+  if(!contactVal || !emailVal || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)){
+    alert("Merci de renseigner le contact et un e-mail valide avant d'envoyer la commande.");
     (!contactVal ? contactEl : emailEl).focus();
     return;
   }
@@ -2497,7 +2534,7 @@ document.getElementById('bb_btn').addEventListener('click',async function(){
     intro='Bonjour'+(contactVal?' '+contactVal:'')+',\n\nSuite à notre échange, je vous propose l\'implantation de la gamme Hydratis dans '+(multi?'vos '+lieux:'votre magasin INTERSPORT '+d0.m.v)+'.\n\nVous trouverez ci-dessous'+(multi?', magasin par magasin,':'')+' la proforma détaillant l\'assortiment de lancement conseillé (produits et matériels PLV), ainsi que les conditions tarifaires associées.\n\n';
     outro='\n\nCette proposition n\'a pas valeur de commande.\nPour la valider, cliquez sur le bouton « Je valide la proposition »'+(multi?' : vous choisirez les magasins à valider, un par un ou tous ensemble':'')+'. Pour l\'ajuster, répondez simplement à cet e-mail.\n\nJe reste à votre disposition pour organiser la mise en place en magasin.'+signature;
   } else {
-    intro='Bonjour'+(contactVal?' '+contactVal:'')+',\n\nSuite à l\'analyse de vos ventes et de votre stock, je vous propose le réassort Hydratis suivant pour '+(multi?'vos '+lieux:'votre magasin INTERSPORT '+d0.m.v)+'.\n\nVous trouverez ci-dessous le récapitulatif de la proposition'+(multi?', magasin par magasin, puis le total général':'')+'.\n\n';
+    intro='Bonjour'+(contactVal?' '+contactVal:'')+',\n\n'+(CS_MODE==='reliquat'?'Suite à notre échange, je vous propose le reliquat de votre commande Hydratis pour ':'Suite à l\'analyse de vos ventes et de votre stock, je vous propose le réassort Hydratis suivant pour ')+''+(multi?'vos '+lieux:'votre magasin INTERSPORT '+d0.m.v)+'.\n\nVous trouverez ci-dessous le récapitulatif de la proposition'+(multi?', magasin par magasin, puis le total général':'')+'.\n\n';
     outro='\n\nCette proposition n\'a pas valeur de commande.\nPour la valider, cliquez sur le bouton « Je valide la proposition »'+(multi?' : vous choisirez les magasins à valider, un par un ou tous ensemble':'')+'. Pour modifier les quantités, répondez simplement à cet e-mail.'+signature;
   }
 
@@ -2580,7 +2617,7 @@ document.getElementById('bb_btn').addEventListener('click',async function(){
       headers:{'Content-Type':'application/json'},
       // Mode commercial : la proposition part au magasin, copie au(x) commercial(aux) (+ DESTINATAIRE pour traçabilité),
       // et le magasin répond directement au commercial.
-      body:JSON.stringify(MODE_CS
+      body:stringifyWithCommandes(docs, MODE_CS
         ? {to:emailVal,cc:[...new Set([...commerciaux,DESTINATAIRE])],subject:objet,body:emailBody,html:emailHtml,replyTo:emailCommercial,attachments:avecPdf?attachments:undefined,
            accept:{commercial:emailCommercial,dest:DESTINATAIRE,magasin:multi?`${nb} magasins : ${villes}`:d0.magLbl,contact:contactVal,titre:CS_LABELS[CS_MODE].titre,...recapAccept}}
         : {to:emailCommercial,cc:[...commerciaux.slice(1),DESTINATAIRE,emailVal].filter(Boolean),subject:objet,body:emailBody,html:emailHtml,replyTo:emailVal||undefined,attachments:avecPdf?attachments:undefined})
