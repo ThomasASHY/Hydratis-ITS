@@ -3019,6 +3019,19 @@ document.getElementById('bb_btn').addEventListener('click',async function(){
     plvPreReps.push(plvPre);
     plvReps.push(plvRep);
   }
+  // Client : aucune préco 2027 dans la commande → on lui propose d'y jeter un œil avant d'envoyer
+  if(!MODE_CS && STORES.every((_,i)=>{ if(multi) showStore(i); const q=window.ORDER.pre; return !(q.nd>0||q.ns>0); })){
+    if(multi) showStore(retour);
+    const _go = await new Promise(done=>{
+      const d=document.createElement('dialog'); d.className='plvop-dlg';
+      d.innerHTML='<h3>📦 Avez-vous pensé à la précommande 2027 ?</h3><p>Votre commande ne comprend ni Préco Duo ni Préco sans sucre. Les précommandes bénéficient de remises par paliers et d\'une livraison dès janvier (sans sucre) ou mars (Duo).</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button type="button" data-r="voir" style="flex:1;min-width:150px;padding:11px;border-radius:10px;border:0;background:#0673a3;color:#fff;font:inherit;font-weight:800;cursor:pointer">Voir les précommandes</button><button type="button" data-r="non" style="flex:1;min-width:150px;padding:11px;border-radius:10px;border:2px solid #0673a3;background:#fff;color:#0673a3;font:inherit;font-weight:800;cursor:pointer">Envoyer sans précommande</button></div>';
+      document.body.appendChild(d);
+      d.addEventListener('click',e=>{ const r=e.target.dataset&&e.target.dataset.r; if(r){ d.close(); d.remove(); done(r); } });
+      d.addEventListener('cancel',e=>{ e.preventDefault(); d.close(); d.remove(); done('voir'); });
+      d.showModal();
+    });
+    if(_go==='voir'){ const w=document.querySelector('.pre-wrap'); if(w) w.scrollIntoView({behavior:'smooth',block:'start'}); return; }
+  }
   const docs = [];
   for(let i=0;i<nb;i++){
     if(multi) showStore(i);
@@ -3041,7 +3054,11 @@ document.getElementById('bb_btn').addEventListener('click',async function(){
   const objet = (MODE_CS ? `${CS_LABELS[CS_MODE].titre} Hydratis` : 'Commande Hydratis BtoB')+
     ` — ${multi ? lieux : d0.magLbl} — ${dateJour}`+(aPreco ? ' (dont précommande 2027)' : '');
   const precoNoms = [...new Set(docs.filter(d=>d.preco).map(d=>d.preco==='duo'?'Préco Duo':'Préco sans sucre'))].join(' et ');
-  const precoPhrase = aPreco ? `\n\n📦 Cette ${MODE_CS&&!CONF()?'proposition':'commande'} comprend une précommande 2027 (${precoNoms}) : elle est traitée à part, hors offre octobre / novembre, avec un bon de commande PDF distinct par préco.` : '';
+  const _hasDuo = docs.some(d=>d.preco==='duo'), _hasSs = docs.some(d=>d.preco==='ss');
+  const _pc = MODE_CS&&!CONF()?'proposition':'commande';
+  const precoPhrase = aPreco ? (_hasDuo&&_hasSs
+    ? `\n\n📦 Cette ${_pc} comprend deux précommandes 2027 : une Préco Duo et une Préco sans sucre. Elles sont traitées à part, hors offre octobre / novembre, avec un bon de commande PDF distinct par préco.`
+    : `\n\n📦 Cette ${_pc} comprend une précommande 2027 : ${_hasDuo?'Préco Duo':'Préco sans sucre'}. Elle est traitée à part, hors offre octobre / novembre, avec son propre bon de commande PDF.`) : '';
 
   const signature = `\n\nBien cordialement,\n${commerciaux.length>1?'Vos commerciaux':'Votre commercial'} Hydratis\n${commerciaux.join(', ')}\n`;
   let intro, outro;
